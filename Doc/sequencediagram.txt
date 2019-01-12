@@ -1,0 +1,12 @@
+title TX Leg. Online Bill Search
+
+user->browser: click bookmark / enter URI
+browser->texas.gov: GET /Search/BillSearch.aspx
+texas.gov->browser: 200 OK\n... HTML search criteria page ...
+note right of user: think; click on search criteria
+user->browser: click 'Search'
+browser->texas.gov: POST /Search/BillSearch.aspx\n(request body contains search criteria)
+texas.gov->browser: 302 Found\nLocation: /Search/BillSearchResults.aspx?NSP=1&...&ID=abc123DEF\n* newly generated ID is included in query params AND SessionInfo.UserID cookie\n* redirect URI query parameters contain search criteria
+note right of browser: The next request happens automatically, without user interaction.
+browser->texas.gov: GET /Search/BillSearchResults.aspx?NSP=1&...&ID=abc123DEF
+texas.gov->browser: 200 OK\n... HTML search results ...
