@@ -1,7 +1,11 @@
 import requests
 from bs4 import BeautifulSoup
-from pprint import pprint
 from urllib.parse import urlparse, parse_qs
+
+TRACE = False
+
+if TRACE:
+    from pprint import pprint
 
 BILL_SEARCH_URI = "https://capitol.texas.gov/Search/BillSearch.aspx"
 VIEWSTATE_ID = '__VIEWSTATE'
@@ -70,10 +74,6 @@ BILL_SEARCH_RESULT_URI = str('https://capitol.texas.gov/Search/BillSearchResults
     # '&ID=s36alcgKa' add the ID query param in dynamically, later
 
 
-def bill_search_result_uri(id):
-    return BILL_SEARCH_RESULT_URI + '&ID=' + id
-
-
 def hidden_input_value(soup, id):
     return soup \
         .find(name='input', attrs={'type':'hidden','id':id}) \
@@ -93,55 +93,80 @@ def search_id(bill_search_redirect_uri):
     return id_values[0]
 
 
-## Make the initial request to BillSearch.aspx
-session = requests.Session()
-cold_response = session.get(BILL_SEARCH_URI)
-## to dump request: https://stackoverflow.com/questions/20658572/python-requests-print-entire-http-request-raw
-## to dump response: https://stackoverflow.com/questions/16923898/how-to-get-the-raw-content-of-a-response-in-requests-with-python
-#print(cold_response.headers)
+def postback_data(cold_response):
+    ## Prepare the POSTBACK to BillSearch.aspx.
+    soup = BeautifulSoup(cold_response.text, 'html.parser')
+    post_data = BILL_SEARCH_POSTBACK_PARAMS.copy()
+    post_data[VIEWSTATE_ID] = hidden_input_value(soup, VIEWSTATE_ID)
+    post_data[PREVPAGE_ID]  = hidden_input_value(soup, PREVPAGE_ID)
+    
+    if TRACE: pprint(post_data)
+    
+    return post_data
 
 
-## Prepare and send the POSTBACK to BillSearch.aspx to obtain an ID
-soup = BeautifulSoup(cold_response.text, 'html.parser')
-post_data = BILL_SEARCH_POSTBACK_PARAMS.copy()
-post_data[VIEWSTATE_ID] = hidden_input_value(soup, VIEWSTATE_ID)
-post_data[PREVPAGE_ID] = hidden_input_value(soup, PREVPAGE_ID)
-#pprint(post_data)
-postback_response = session.post(
-    BILL_SEARCH_URI, 
-    data=post_data, 
-    allow_redirects=False)
-#print(session.cookies)
-print('{} => {}'.format(
-    postback_response.status_code,
-    postback_response.headers.get('Location', '')))
+def fetch_fresh_search_id(session):
+    cold_response = session.get(BILL_SEARCH_URI)
+    postback_response = session.post(
+        BILL_SEARCH_URI, 
+        data=postback_data(cold_response), 
+        allow_redirects=False) # <== This parameter is critical!
+    redirect_uri = postback_response.headers.get('Location', None)
+
+    if postback_response.status_code != 302 or redirect_uri is None:
+        raise RuntimeError("Failed to trick BillSearch.aspx into issuing a fresh search ID.")
+
+    id = search_id(redirect_uri)
+    return id
 
 
-## Run the actual search on BillSearchResults.aspx using the ID
-id = search_id(postback_response.headers['Location'])
-results_uri = bill_search_result_uri(id)
-results_response = session.get(results_uri)
+def parse_search_results_page(page_text):
+    '''
+    Extract bill names (e.g., "HB 26") from HTML fragments like this:
+    
+        <table width="95%">
+            <tr width="100%">
+                <td nowrap width="15%">
+                    <a href="#" id='86R-HB 26' onClick="SetBillID(this.id); return dropdownmenu(this, event, menu)" onMouseout="delayhidemenu()">
+                        <img src="../Images/txicon.gif" class="noPrint" alt="Click for options"/>
+                    </a> 
+                    <a href=../BillLookup/History.aspx?LegSess=86R&Bill=HB26 target="_new">
+                        HB 26   
+                    </a>
+                </td>
+        ...
+    
+    Start by finding the constant txicon.gif image tag, then navigate to the 
+    bill name.
+    '''
+    soup = BeautifulSoup(page_text, 'html.parser')
+    for icon in soup.find_all(name='img', attrs={'src':'../Images/txicon.gif'}):
+        td = icon.parent.parent
+        bill_link = td.contents[3]
+        yield bill_link.string.strip()
 
 
-# Extract the bill name from HTML fragments like this:
-#
-# <table width="95%">
-#     <tr width="100%">
-#         <td nowrap width="15%">
-#             <a href="#" id='86R-HB 26' onClick="SetBillID(this.id); return dropdownmenu(this, event, menu)" onMouseout="delayhidemenu()">
-#                 <img src="../Images/txicon.gif" class="noPrint" alt="Click for options"/>
-#             </a> 
-#             <a href=../BillLookup/History.aspx?LegSess=86R&Bill=HB26 target="_new">
-#                 HB 26   
-#             </a>
-#         </td>
-# ...
-#
-# Start by finding the constant txicon.gif image tag, then navigate to the 
-# bill name.
+def matching_bill_names(session, incomplete_results_uri, id):
+    '''
+    Run a TX Legislature activity search, given:
+    
+        session - a Requests Session
 
-soup = BeautifulSoup(results_response.text, 'html.parser')
-for icon in soup.find_all(name='img', attrs={'src':'../Images/txicon.gif'}):
-    td = icon.parent.parent
-    bill_link = td.contents[3]
-    print(bill_link.string.strip())
+        incomplete_results_uri - a BillSearchResults.aspx URI 
+            without the 'ID' query parameter)
+
+        id - a "fresh" (< 24 hours old) search ID value.
+
+    Generates all bill name strings (e.g., "HB21") from the first page of 
+    results.
+    '''
+    results_uri = incomplete_results_uri + '&ID=' + id
+    results_response = session.get(results_uri)
+    yield from parse_search_results_page(results_response.text)
+
+
+if __name__ == '__main__':
+    session = requests.Session()
+    id = fetch_fresh_search_id(session)
+    for bill in matching_bill_names(session, BILL_SEARCH_RESULT_URI, id):
+        print(bill)
