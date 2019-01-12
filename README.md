@@ -33,6 +33,9 @@ if __name__ == '__main__':
     session = requests.Session()
     id = new_search_id(session)     # <== THE IMPORTANT PART!
     # Substitute this "fresh" ID for the one included in old searches.
+
+    # This is just a very simple demonstration that we can actually get 
+    # search results directly from BillSearchResults.aspx.
     for bill in matching_bill_names(session, BILL_SEARCH_RESULT_URI, id):
         print(bill)
 ```

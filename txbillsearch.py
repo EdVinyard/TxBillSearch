@@ -38,7 +38,7 @@ BILL_SEARCH_POSTBACK_PARAMS = {
     "usrActionsFolder$dtActionFromDate": "",
     "usrActionsFolder$dtActionToDate": "",
     }
-BILL_SEARCH_RESULT_URI = str('https://capitol.texas.gov/Search/BillSearchResults.aspx' +
+BILL_SEARCH_RESULT_URI = ('https://capitol.texas.gov/Search/BillSearchResults.aspx' +
     '?NSP=1' + 
     '&SPL=False' + 
     '&SPC=False' + 
