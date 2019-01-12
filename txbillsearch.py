@@ -105,7 +105,7 @@ def postback_data(cold_response):
     return post_data
 
 
-def fetch_fresh_search_id(session):
+def new_search_id(session):
     cold_response = session.get(BILL_SEARCH_URI)
     postback_response = session.post(
         BILL_SEARCH_URI, 
@@ -167,6 +167,10 @@ def matching_bill_names(session, incomplete_results_uri, id):
 
 if __name__ == '__main__':
     session = requests.Session()
-    id = fetch_fresh_search_id(session)
+    id = new_search_id(session)
     for bill in matching_bill_names(session, BILL_SEARCH_RESULT_URI, id):
         print(bill)
+
+## TODO: encapsulate most of this module into a stateful class
+## TODO: extract all available info for each bill
+## TODO: lazily iterate over the paged search results
