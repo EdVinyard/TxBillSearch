@@ -1,0 +1,253 @@
+{
+    "pageref": "page_1",
+    "startedDateTime": "2019-01-12T11:29:22.839-06:00",
+    "request": {
+        "bodySize": 6464,
+        "method": "POST",
+        "url": "https://capitol.texas.gov/Search/BillSearch.aspx",
+        "httpVersion": "HTTP/1.1",
+        "headers": [
+            {
+                "name": "Host",
+                "value": "capitol.texas.gov"
+            },
+            {
+                "name": "User-Agent",
+                "value": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:64.0) Gecko/20100101 Firefox/64.0"
+            },
+            {
+                "name": "Accept",
+                "value": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+            },
+            {
+                "name": "Accept-Language",
+                "value": "en-US,en;q=0.5"
+            },
+            {
+                "name": "Accept-Encoding",
+                "value": "gzip, deflate, br"
+            },
+            {
+                "name": "Referer",
+                "value": "https://capitol.texas.gov/Search/BillSearch.aspx"
+            },
+            {
+                "name": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+            },
+            {
+                "name": "Content-Length",
+                "value": "6464"
+            },
+            {
+                "name": "DNT",
+                "value": "1"
+            },
+            {
+                "name": "Connection",
+                "value": "keep-alive"
+            },
+            {
+                "name": "Cookie",
+                "value": "ASP.NET_SessionId=m2h2jizkeerzslex4qsf1o55; StickyPrefs=LegSess=&InfoType=&SearchType="
+            },
+            {
+                "name": "Upgrade-Insecure-Requests",
+                "value": "1"
+            }
+        ],
+        "cookies": [
+            {
+                "name": "ASP.NET_SessionId",
+                "value": "m2h2jizkeerzslex4qsf1o55"
+            },
+            {
+                "name": "StickyPrefs",
+                "value": "LegSess=&InfoType=&SearchType="
+            }
+        ],
+        "queryString": [],
+        "headersSize": 586,
+        "postData": {
+            "mimeType": "application/x-www-form-urlencoded",
+            "params": [
+                {
+                    "name": "__EVENTTARGET",
+                    "value": ""
+                },
+                {
+                    "name": "__EVENTARGUMENT",
+                    "value": ""
+                },
+                {
+                    "name": "__LASTFOCUS",
+                    "value": ""
+                },
+                {
+                    "name": "__VIEWSTATE",
+                    "value": "/wEPDwUKMjAzMjU1MjI2OA8WAh4LTGVnaXNsYXR1cmUFAjg2FgQCAQ9kFghmDw8WAh4ISW1hZ2VVcmwFGX4vSW1hZ2VzL2NhcGl0b2xTbWFsbC5qcGcWBB4FV2lkdGgFAzEwOB4GSGVpZ2h0BQI1MGQCAQ8PFgIeBFRleHQFGFRleGFzIExlZ2lzbGF0dXJlIE9ubGluZWRkAgIPDxYCHwQFC0JpbGwgU2VhcmNoZGQCAw8WAh8EBacCPGZvbnQgc3R5bGU9ImZvbnQtd2VpZ2h0OiBib2xkOyBmb250LXNpemU6IDEwcHgiIGNvbG9yPXdoaXRlPkhvdXNlOiA8c2NyaXB0IHNyYz0iL3Rsb2RvY3MvU2Vzc2lvblRpbWUvSG91c2VTZXNzVGltZS5qcz92PTQzNDc3Ij48L3NjcmlwdD48L2ZvbnQ+PGJyLz48Zm9udCBzdHlsZT0iZm9udC13ZWlnaHQ6IGJvbGQ7IGZvbnQtc2l6ZTogMTBweCIgY29sb3I9d2hpdGU+U2VuYXRlOiA8c2NyaXB0IHNyYz0iL3Rsb2RvY3MvU2Vzc2lvblRpbWUvU2VuYXRlU2Vzc1RpbWUuanM/dj00MzQ3NyI+PC9zY3JpcHQ+PC9mb250PmQCBQ9kFiICBQ8PFgIeC05hdmlnYXRlVXJsBThKYXZhU2NyaXB0OmFsZXJ0KCdQbGVhc2UgbG9naW4gdG8gYWNjZXNzIHRoaXMgZmVhdHVyZS4nKWRkAgcPD2QWAh4Hb25DbGljawVFSmF2YVNjcmlwdDphbGVydCgnUGxlYXNlIGxvZ2luIHRvIGFjY2VzcyB0aGlzIGZlYXR1cmUuJyk7cmV0dXJuIGZhbHNlZAIJDxAPFgYeDURhdGFUZXh0RmllbGQFC0Rlc2NyaXB0aW9uHg5EYXRhVmFsdWVGaWVsZAUHTGVnU2Vzcx4LXyFEYXRhQm91bmRnZBAVJww4NihSKSAtIDIwMTkMODUoMSkgLSAyMDE3DDg1KFIpIC0gMjAxNww4NChSKSAtIDIwMTUMODMoMykgLSAyMDEzDDgzKDIpIC0gMjAxMww4MygxKSAtIDIwMTMMODMoUikgLSAyMDEzDDgyKDEpIC0gMjAxMQw4MihSKSAtIDIwMTEMODEoMSkgLSAyMDA5DDgxKFIpIC0gMjAwOQw4MChSKSAtIDIwMDcMNzkoMykgLSAyMDA2DDc5KDIpIC0gMjAwNQw3OSgxKSAtIDIwMDUMNzkoUikgLSAyMDA1DDc4KDQpIC0gMjAwNAw3OCgzKSAtIDIwMDMMNzgoMikgLSAyMDAzDDc4KDEpIC0gMjAwMww3OChSKSAtIDIwMDMMNzcoUikgLSAyMDAxDDc2KFIpIC0gMTk5OQw3NShSKSAtIDE5OTcMNzQoUikgLSAxOTk1DDczKFIpIC0gMTk5Mww3Mig0KSAtIDE5OTIMNzIoMykgLSAxOTkyDDcyKDIpIC0gMTk5MQw3MigxKSAtIDE5OTEMNzIoUikgLSAxOTkxDDcxKDYpIC0gMTk5MAw3MSg1KSAtIDE5OTAMNzEoNCkgLSAxOTkwDDcxKDMpIC0gMTk5MAw3MSgyKSAtIDE5ODkMNzEoMSkgLSAxOTg5DDcxKFIpIC0gMTk4ORUnAzg2UgM4NTEDODVSAzg0UgM4MzMDODMyAzgzMQM4M1IDODIxAzgyUgM4MTEDODFSAzgwUgM3OTMDNzkyAzc5MQM3OVIDNzg0Azc4MwM3ODIDNzgxAzc4UgM3N1IDNzZSAzc1UgM3NFIDNzNSAzcyNAM3MjMDNzIyAzcyMQM3MlIDNzE2AzcxNQM3MTQDNzEzAzcxMgM3MTEDNzFSFCsDJ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZxYBZmQCDQ8QD2QWAh8GBSRjaGVja19yZXF1aXJlZF9maWVsZHMoJ2NoYW1iZXInLCcnKTtkZGQCDw8QD2QWAh8GBSRjaGVja19yZXF1aXJlZF9maWVsZHMoJ2NoYW1iZXInLCcnKTtkZGQCEw8QD2QWAh8GBSVjaGVja19yZXF1aXJlZF9maWVsZHMoJ2JpbGx0eXBlJywnJyk7ZGRkAhUPEA9kFgIfBgUlY2hlY2tfcmVxdWlyZWRfZmllbGRzKCdiaWxsdHlwZScsJycpO2RkZAIXDxAPZBYCHwYFJWNoZWNrX3JlcXVpcmVkX2ZpZWxkcygnYmlsbHR5cGUnLCcnKTtkZGQCGQ8QD2QWAh8GBSVjaGVja19yZXF1aXJlZF9maWVsZHMoJ2JpbGx0eXBlJywnJyk7ZGRkAhsPEA8WAh4HQ2hlY2tlZGgWAh8GBSVjaGVja19yZXF1aXJlZF9maWVsZHMoJ2JpbGx0eXBlJywnJyk7ZGRkAh0PEA8WAh8KaBYCHwYFJWNoZWNrX3JlcXVpcmVkX2ZpZWxkcygnYmlsbHR5cGUnLCcnKTtkZGQCHw8QD2QWAh8GBShjaGVja19yZXF1aXJlZF9maWVsZHMoJ2JpbGx0eXBlJywnYWxsJyk7ZGRkAiMPZBYCAgEPZBYQAgEPDxYCHwUFcUphdmFTY3JpcHQ6ZGlzcGxheUxpc3QoJ0F1dGhvcicsJ0JpbGxTZWFyY2hMZWdpc2xhdG9yTGlzdC5hc3B4P0lEPXVzckxlZ2lzbGF0b3JzRm9sZGVyJGNib0F1dGhvciZMZWc9ODYnLDQ0MCw1MDApZGQCBQ8QD2QWAh8GBSBjaGVja19yZXF1aXJlZF9maWVsZHMoJ2F1dGhvcicpO2RkZAIHDxAPZBYCHwYFIGNoZWNrX3JlcXVpcmVkX2ZpZWxkcygnYXV0aG9yJyk7ZGRkAgkPEA9kFgIfBgUgY2hlY2tfcmVxdWlyZWRfZmllbGRzKCdhdXRob3InKTtkZGQCDg8PFgIfBQVzSmF2YVNjcmlwdDpkaXNwbGF5TGlzdCgnU3BvbnNvcicsJ0JpbGxTZWFyY2hMZWdpc2xhdG9yTGlzdC5hc3B4P0lEPXVzckxlZ2lzbGF0b3JzRm9sZGVyJGNib1Nwb25zb3ImTGVnPTg2Jyw0NDAsNTAwKWRkAhQPEA9kFgIfBgUhY2hlY2tfcmVxdWlyZWRfZmllbGRzKCdzcG9uc29yJyk7ZGRkAhYPEA9kFgIfBgUhY2hlY2tfcmVxdWlyZWRfZmllbGRzKCdzcG9uc29yJyk7ZGRkAhgPEA9kFgIfBgUhY2hlY2tfcmVxdWlyZWRfZmllbGRzKCdzcG9uc29yJyk7ZGRkAiUPZBYCAgEPZBYEAgEPDxYCHwUFlQFKYXZhU2NyaXB0OmRpc3BsYXlMaXN0KCdTdWJqZWN0cycsJ0JpbGxTZWFyY2hTdWJqZWN0TGlzdC5hc3B4P0xpc3RJRD11c3JTdWJqZWN0c0ZvbGRlciRsc3RTdWJqZWN0cyZDb2RlSUQ9dXNyU3ViamVjdHNGb2xkZXIkdHh0Q29kZXMmTGVnPTg2Jyw3OTUsNTAwKWRkAgMPEA9kFgIeCW9ua2V5ZG93bgVXSmF2YVNjcmlwdDpsaXN0Ym94X2tleWRvd24oZXZlbnQsICd1c3JTdWJqZWN0c0ZvbGRlcicsICd1c3JTdWJqZWN0c0ZvbGRlcl9sc3RTdWJqZWN0cycpZGRkAicPZBYCAgEPZBYCAgEPDxYCHwUFUUphdmFTY3JpcHQ6ZGlzcGxheUxpc3QoJ0NvbW1pdHRlZScsJ0JpbGxTZWFyY2hDb21taXR0ZWVMaXN0LmFzcHg/TGVnPTg2Jyw0NzAsNTEwKWRkAikPZBYCAgEPZBYOAgEPDxYCHwUFkAFKYXZhU2NyaXB0OmRpc3BsYXlMaXN0KCdBY3Rpb25zJywnQmlsbFNlYXJjaEFjdGlvbkxpc3QuYXNweD9MaXN0SUQ9dXNyQWN0aW9uc0ZvbGRlciRsc3RBY3Rpb25zJkNvZGVJRD11c3JBY3Rpb25zRm9sZGVyJHR4dENvZGVzJkxlZz04NicsNzk1LDUwMClkZAIDDxAPZBYCHwsFVEphdmFTY3JpcHQ6bGlzdGJveF9rZXlkb3duKGV2ZW50LCAndXNyQWN0aW9uc0ZvbGRlcicsICd1c3JBY3Rpb25zRm9sZGVyX2xzdEFjdGlvbnMnKWRkZAIQDw9kFgIfBgUWcmVzZXRfVG9kYXlUb21vcnJvdygpO2QCEg8QD2QWAh8GBRRyZXNldF9BY3Rpb25EYXRlcygpO2RkZAIUDxAPZBYCHwYFFHJlc2V0X0FjdGlvbkRhdGVzKCk7ZGRkAhYPD2QWAh8GBRZyZXNldF9Ub2RheVRvbW9ycm93KCk7ZAIYDw9kFgIfBgUWcmVzZXRfVG9kYXlUb21vcnJvdygpO2QCKw8PFgIfBAUCODZkZBgBBR5fX0NvbnRyb2xzUmVxdWlyZVBvc3RCYWNrS2V5X18WIAUIY2hrSG91c2UFCWNoa1NlbmF0ZQUEY2hrQgUFY2hrSlIFBWNoa0NSBQRjaGtSBQZjaGtBbGwFJXVzckxlZ2lzbGF0b3JzRm9sZGVyJGNoa1ByaW1hcnlBdXRob3IFI3VzckxlZ2lzbGF0b3JzRm9sZGVyJGNoa0pvaW50QXV0aG9yBSB1c3JMZWdpc2xhdG9yc0ZvbGRlciRjaGtDb2F1dGhvcgUadXNyTGVnaXNsYXRvcnNGb2xkZXIkcmRvT3IFG3VzckxlZ2lzbGF0b3JzRm9sZGVyJHJkb0FuZAUbdXNyTGVnaXNsYXRvcnNGb2xkZXIkcmRvQW5kBSZ1c3JMZWdpc2xhdG9yc0ZvbGRlciRjaGtQcmltYXJ5U3BvbnNvcgUkdXNyTGVnaXNsYXRvcnNGb2xkZXIkY2hrSm9pbnRTcG9uc29yBSF1c3JMZWdpc2xhdG9yc0ZvbGRlciRjaGtDb3Nwb25zb3IFGHVzclN1YmplY3RzRm9sZGVyJHJkb0FuZAUYdXNyU3ViamVjdHNGb2xkZXIkcmRvQW5kBRd1c3JTdWJqZWN0c0ZvbGRlciRyZG9PcgUfdXNyQ29tbWl0dGVlc0ZvbGRlciRyZG9TdGF0dXNJbgUfdXNyQ29tbWl0dGVlc0ZvbGRlciRyZG9TdGF0dXNJbgUgdXNyQ29tbWl0dGVlc0ZvbGRlciRyZG9TdGF0dXNPdXQFIHVzckNvbW1pdHRlZXNGb2xkZXIkcmRvU3RhdHVzT3V0BSF1c3JDb21taXR0ZWVzRm9sZGVyJHJkb1N0YXR1c0JvdGgFF3VzckFjdGlvbnNGb2xkZXIkcmRvQW5kBRd1c3JBY3Rpb25zRm9sZGVyJHJkb0FuZAUWdXNyQWN0aW9uc0ZvbGRlciRyZG9PcgUhdXNyQWN0aW9uc0ZvbGRlciRyZG9MYXN0QWN0aW9uWWVzBSF1c3JBY3Rpb25zRm9sZGVyJHJkb0xhc3RBY3Rpb25ZZXMFIHVzckFjdGlvbnNGb2xkZXIkcmRvTGFzdEFjdGlvbk5vBR91c3JBY3Rpb25zRm9sZGVyJGNoa0FjdGlvblRvZGF5BSJ1c3JBY3Rpb25zRm9sZGVyJGNoa0FjdGlvblRvbW9ycm93627vVO65BZmaWIoKnh5EY3MNmzk="
+                },
+                {
+                    "name": "__PREVIOUSPAGE",
+                    "value": "zoWbDp4uzplplJAdF771idutHpq6ubY-00QfpQl9ZBUEGpMkzGdLIcYjsYSxX-XEGMoJt6y3GUsKLnOcyVlLtuVCshM1"
+                },
+                {
+                    "name": "cboLegSess",
+                    "value": "86R"
+                },
+                {
+                    "name": "chkHouse",
+                    "value": "on"
+                },
+                {
+                    "name": "chkSenate",
+                    "value": "on"
+                },
+                {
+                    "name": "chkB",
+                    "value": "on"
+                },
+                {
+                    "name": "chkJR",
+                    "value": "on"
+                },
+                {
+                    "name": "btnSearch",
+                    "value": "Search"
+                },
+                {
+                    "name": "usrLegislatorsFolder$cboAuthor",
+                    "value": ""
+                },
+                {
+                    "name": "usrLegislatorsFolder$chkPrimaryAuthor",
+                    "value": "on"
+                },
+                {
+                    "name": "usrLegislatorsFolder$authspon",
+                    "value": "rdoOr"
+                },
+                {
+                    "name": "usrLegislatorsFolder$cboSponsor",
+                    "value": ""
+                },
+                {
+                    "name": "usrLegislatorsFolder$chkPrimarySponsor",
+                    "value": "on"
+                },
+                {
+                    "name": "usrSubjectsFolder$subjectandor",
+                    "value": "rdoOr"
+                },
+                {
+                    "name": "usrSubjectsFolder$txtCodes",
+                    "value": ""
+                },
+                {
+                    "name": "usrCommitteesFolder$cboCommittee",
+                    "value": ""
+                },
+                {
+                    "name": "usrCommitteesFolder$status",
+                    "value": "rdoStatusBoth"
+                },
+                {
+                    "name": "usrActionsFolder$actionandor",
+                    "value": "rdoOr"
+                },
+                {
+                    "name": "usrActionsFolder$txtCodes",
+                    "value": ""
+                },
+                {
+                    "name": "usrActionsFolder$lastaction",
+                    "value": "rdoLastActionNo"
+                },
+                {
+                    "name": "usrActionsFolder$dtActionOnDate",
+                    "value": ""
+                },
+                {
+                    "name": "usrActionsFolder$dtActionFromDate",
+                    "value": ""
+                },
+                {
+                    "name": "usrActionsFolder$dtActionToDate",
+                    "value": ""
+                }
+            ],
+            "text": "__EVENTTARGET=&__EVENTARGUMENT=&__LASTFOCUS=&__VIEWSTATE=%2FwEPDwUKMjAzMjU1MjI2OA8WAh4LTGVnaXNsYXR1cmUFAjg2FgQCAQ9kFghmDw8WAh4ISW1hZ2VVcmwFGX4vSW1hZ2VzL2NhcGl0b2xTbWFsbC5qcGcWBB4FV2lkdGgFAzEwOB4GSGVpZ2h0BQI1MGQCAQ8PFgIeBFRleHQFGFRleGFzIExlZ2lzbGF0dXJlIE9ubGluZWRkAgIPDxYCHwQFC0JpbGwgU2VhcmNoZGQCAw8WAh8EBacCPGZvbnQgc3R5bGU9ImZvbnQtd2VpZ2h0OiBib2xkOyBmb250LXNpemU6IDEwcHgiIGNvbG9yPXdoaXRlPkhvdXNlOiA8c2NyaXB0IHNyYz0iL3Rsb2RvY3MvU2Vzc2lvblRpbWUvSG91c2VTZXNzVGltZS5qcz92PTQzNDc3Ij48L3NjcmlwdD48L2ZvbnQ%2BPGJyLz48Zm9udCBzdHlsZT0iZm9udC13ZWlnaHQ6IGJvbGQ7IGZvbnQtc2l6ZTogMTBweCIgY29sb3I9d2hpdGU%2BU2VuYXRlOiA8c2NyaXB0IHNyYz0iL3Rsb2RvY3MvU2Vzc2lvblRpbWUvU2VuYXRlU2Vzc1RpbWUuanM%2Fdj00MzQ3NyI%2BPC9zY3JpcHQ%2BPC9mb250PmQCBQ9kFiICBQ8PFgIeC05hdmlnYXRlVXJsBThKYXZhU2NyaXB0OmFsZXJ0KCdQbGVhc2UgbG9naW4gdG8gYWNjZXNzIHRoaXMgZmVhdHVyZS4nKWRkAgcPD2QWAh4Hb25DbGljawVFSmF2YVNjcmlwdDphbGVydCgnUGxlYXNlIGxvZ2luIHRvIGFjY2VzcyB0aGlzIGZlYXR1cmUuJyk7cmV0dXJuIGZhbHNlZAIJDxAPFgYeDURhdGFUZXh0RmllbGQFC0Rlc2NyaXB0aW9uHg5EYXRhVmFsdWVGaWVsZAUHTGVnU2Vzcx4LXyFEYXRhQm91bmRnZBAVJww4NihSKSAtIDIwMTkMODUoMSkgLSAyMDE3DDg1KFIpIC0gMjAxNww4NChSKSAtIDIwMTUMODMoMykgLSAyMDEzDDgzKDIpIC0gMjAxMww4MygxKSAtIDIwMTMMODMoUikgLSAyMDEzDDgyKDEpIC0gMjAxMQw4MihSKSAtIDIwMTEMODEoMSkgLSAyMDA5DDgxKFIpIC0gMjAwOQw4MChSKSAtIDIwMDcMNzkoMykgLSAyMDA2DDc5KDIpIC0gMjAwNQw3OSgxKSAtIDIwMDUMNzkoUikgLSAyMDA1DDc4KDQpIC0gMjAwNAw3OCgzKSAtIDIwMDMMNzgoMikgLSAyMDAzDDc4KDEpIC0gMjAwMww3OChSKSAtIDIwMDMMNzcoUikgLSAyMDAxDDc2KFIpIC0gMTk5OQw3NShSKSAtIDE5OTcMNzQoUikgLSAxOTk1DDczKFIpIC0gMTk5Mww3Mig0KSAtIDE5OTIMNzIoMykgLSAxOTkyDDcyKDIpIC0gMTk5MQw3MigxKSAtIDE5OTEMNzIoUikgLSAxOTkxDDcxKDYpIC0gMTk5MAw3MSg1KSAtIDE5OTAMNzEoNCkgLSAxOTkwDDcxKDMpIC0gMTk5MAw3MSgyKSAtIDE5ODkMNzEoMSkgLSAxOTg5DDcxKFIpIC0gMTk4ORUnAzg2UgM4NTEDODVSAzg0UgM4MzMDODMyAzgzMQM4M1IDODIxAzgyUgM4MTEDODFSAzgwUgM3OTMDNzkyAzc5MQM3OVIDNzg0Azc4MwM3ODIDNzgxAzc4UgM3N1IDNzZSAzc1UgM3NFIDNzNSAzcyNAM3MjMDNzIyAzcyMQM3MlIDNzE2AzcxNQM3MTQDNzEzAzcxMgM3MTEDNzFSFCsDJ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZ2dnZxYBZmQCDQ8QD2QWAh8GBSRjaGVja19yZXF1aXJlZF9maWVsZHMoJ2NoYW1iZXInLCcnKTtkZGQCDw8QD2QWAh8GBSRjaGVja19yZXF1aXJlZF9maWVsZHMoJ2NoYW1iZXInLCcnKTtkZGQCEw8QD2QWAh8GBSVjaGVja19yZXF1aXJlZF9maWVsZHMoJ2JpbGx0eXBlJywnJyk7ZGRkAhUPEA9kFgIfBgUlY2hlY2tfcmVxdWlyZWRfZmllbGRzKCdiaWxsdHlwZScsJycpO2RkZAIXDxAPZBYCHwYFJWNoZWNrX3JlcXVpcmVkX2ZpZWxkcygnYmlsbHR5cGUnLCcnKTtkZGQCGQ8QD2QWAh8GBSVjaGVja19yZXF1aXJlZF9maWVsZHMoJ2JpbGx0eXBlJywnJyk7ZGRkAhsPEA8WAh4HQ2hlY2tlZGgWAh8GBSVjaGVja19yZXF1aXJlZF9maWVsZHMoJ2JpbGx0eXBlJywnJyk7ZGRkAh0PEA8WAh8KaBYCHwYFJWNoZWNrX3JlcXVpcmVkX2ZpZWxkcygnYmlsbHR5cGUnLCcnKTtkZGQCHw8QD2QWAh8GBShjaGVja19yZXF1aXJlZF9maWVsZHMoJ2JpbGx0eXBlJywnYWxsJyk7ZGRkAiMPZBYCAgEPZBYQAgEPDxYCHwUFcUphdmFTY3JpcHQ6ZGlzcGxheUxpc3QoJ0F1dGhvcicsJ0JpbGxTZWFyY2hMZWdpc2xhdG9yTGlzdC5hc3B4P0lEPXVzckxlZ2lzbGF0b3JzRm9sZGVyJGNib0F1dGhvciZMZWc9ODYnLDQ0MCw1MDApZGQCBQ8QD2QWAh8GBSBjaGVja19yZXF1aXJlZF9maWVsZHMoJ2F1dGhvcicpO2RkZAIHDxAPZBYCHwYFIGNoZWNrX3JlcXVpcmVkX2ZpZWxkcygnYXV0aG9yJyk7ZGRkAgkPEA9kFgIfBgUgY2hlY2tfcmVxdWlyZWRfZmllbGRzKCdhdXRob3InKTtkZGQCDg8PFgIfBQVzSmF2YVNjcmlwdDpkaXNwbGF5TGlzdCgnU3BvbnNvcicsJ0JpbGxTZWFyY2hMZWdpc2xhdG9yTGlzdC5hc3B4P0lEPXVzckxlZ2lzbGF0b3JzRm9sZGVyJGNib1Nwb25zb3ImTGVnPTg2Jyw0NDAsNTAwKWRkAhQPEA9kFgIfBgUhY2hlY2tfcmVxdWlyZWRfZmllbGRzKCdzcG9uc29yJyk7ZGRkAhYPEA9kFgIfBgUhY2hlY2tfcmVxdWlyZWRfZmllbGRzKCdzcG9uc29yJyk7ZGRkAhgPEA9kFgIfBgUhY2hlY2tfcmVxdWlyZWRfZmllbGRzKCdzcG9uc29yJyk7ZGRkAiUPZBYCAgEPZBYEAgEPDxYCHwUFlQFKYXZhU2NyaXB0OmRpc3BsYXlMaXN0KCdTdWJqZWN0cycsJ0JpbGxTZWFyY2hTdWJqZWN0TGlzdC5hc3B4P0xpc3RJRD11c3JTdWJqZWN0c0ZvbGRlciRsc3RTdWJqZWN0cyZDb2RlSUQ9dXNyU3ViamVjdHNGb2xkZXIkdHh0Q29kZXMmTGVnPTg2Jyw3OTUsNTAwKWRkAgMPEA9kFgIeCW9ua2V5ZG93bgVXSmF2YVNjcmlwdDpsaXN0Ym94X2tleWRvd24oZXZlbnQsICd1c3JTdWJqZWN0c0ZvbGRlcicsICd1c3JTdWJqZWN0c0ZvbGRlcl9sc3RTdWJqZWN0cycpZGRkAicPZBYCAgEPZBYCAgEPDxYCHwUFUUphdmFTY3JpcHQ6ZGlzcGxheUxpc3QoJ0NvbW1pdHRlZScsJ0JpbGxTZWFyY2hDb21taXR0ZWVMaXN0LmFzcHg%2FTGVnPTg2Jyw0NzAsNTEwKWRkAikPZBYCAgEPZBYOAgEPDxYCHwUFkAFKYXZhU2NyaXB0OmRpc3BsYXlMaXN0KCdBY3Rpb25zJywnQmlsbFNlYXJjaEFjdGlvbkxpc3QuYXNweD9MaXN0SUQ9dXNyQWN0aW9uc0ZvbGRlciRsc3RBY3Rpb25zJkNvZGVJRD11c3JBY3Rpb25zRm9sZGVyJHR4dENvZGVzJkxlZz04NicsNzk1LDUwMClkZAIDDxAPZBYCHwsFVEphdmFTY3JpcHQ6bGlzdGJveF9rZXlkb3duKGV2ZW50LCAndXNyQWN0aW9uc0ZvbGRlcicsICd1c3JBY3Rpb25zRm9sZGVyX2xzdEFjdGlvbnMnKWRkZAIQDw9kFgIfBgUWcmVzZXRfVG9kYXlUb21vcnJvdygpO2QCEg8QD2QWAh8GBRRyZXNldF9BY3Rpb25EYXRlcygpO2RkZAIUDxAPZBYCHwYFFHJlc2V0X0FjdGlvbkRhdGVzKCk7ZGRkAhYPD2QWAh8GBRZyZXNldF9Ub2RheVRvbW9ycm93KCk7ZAIYDw9kFgIfBgUWcmVzZXRfVG9kYXlUb21vcnJvdygpO2QCKw8PFgIfBAUCODZkZBgBBR5fX0NvbnRyb2xzUmVxdWlyZVBvc3RCYWNrS2V5X18WIAUIY2hrSG91c2UFCWNoa1NlbmF0ZQUEY2hrQgUFY2hrSlIFBWNoa0NSBQRjaGtSBQZjaGtBbGwFJXVzckxlZ2lzbGF0b3JzRm9sZGVyJGNoa1ByaW1hcnlBdXRob3IFI3VzckxlZ2lzbGF0b3JzRm9sZGVyJGNoa0pvaW50QXV0aG9yBSB1c3JMZWdpc2xhdG9yc0ZvbGRlciRjaGtDb2F1dGhvcgUadXNyTGVnaXNsYXRvcnNGb2xkZXIkcmRvT3IFG3VzckxlZ2lzbGF0b3JzRm9sZGVyJHJkb0FuZAUbdXNyTGVnaXNsYXRvcnNGb2xkZXIkcmRvQW5kBSZ1c3JMZWdpc2xhdG9yc0ZvbGRlciRjaGtQcmltYXJ5U3BvbnNvcgUkdXNyTGVnaXNsYXRvcnNGb2xkZXIkY2hrSm9pbnRTcG9uc29yBSF1c3JMZWdpc2xhdG9yc0ZvbGRlciRjaGtDb3Nwb25zb3IFGHVzclN1YmplY3RzRm9sZGVyJHJkb0FuZAUYdXNyU3ViamVjdHNGb2xkZXIkcmRvQW5kBRd1c3JTdWJqZWN0c0ZvbGRlciRyZG9PcgUfdXNyQ29tbWl0dGVlc0ZvbGRlciRyZG9TdGF0dXNJbgUfdXNyQ29tbWl0dGVlc0ZvbGRlciRyZG9TdGF0dXNJbgUgdXNyQ29tbWl0dGVlc0ZvbGRlciRyZG9TdGF0dXNPdXQFIHVzckNvbW1pdHRlZXNGb2xkZXIkcmRvU3RhdHVzT3V0BSF1c3JDb21taXR0ZWVzRm9sZGVyJHJkb1N0YXR1c0JvdGgFF3VzckFjdGlvbnNGb2xkZXIkcmRvQW5kBRd1c3JBY3Rpb25zRm9sZGVyJHJkb0FuZAUWdXNyQWN0aW9uc0ZvbGRlciRyZG9PcgUhdXNyQWN0aW9uc0ZvbGRlciRyZG9MYXN0QWN0aW9uWWVzBSF1c3JBY3Rpb25zRm9sZGVyJHJkb0xhc3RBY3Rpb25ZZXMFIHVzckFjdGlvbnNGb2xkZXIkcmRvTGFzdEFjdGlvbk5vBR91c3JBY3Rpb25zRm9sZGVyJGNoa0FjdGlvblRvZGF5BSJ1c3JBY3Rpb25zRm9sZGVyJGNoa0FjdGlvblRvbW9ycm93627vVO65BZmaWIoKnh5EY3MNmzk%3D&__PREVIOUSPAGE=zoWbDp4uzplplJAdF771idutHpq6ubY-00QfpQl9ZBUEGpMkzGdLIcYjsYSxX-XEGMoJt6y3GUsKLnOcyVlLtuVCshM1&cboLegSess=86R&chkHouse=on&chkSenate=on&chkB=on&chkJR=on&btnSearch=Search&usrLegislatorsFolder%24cboAuthor=&usrLegislatorsFolder%24chkPrimaryAuthor=on&usrLegislatorsFolder%24authspon=rdoOr&usrLegislatorsFolder%24cboSponsor=&usrLegislatorsFolder%24chkPrimarySponsor=on&usrSubjectsFolder%24subjectandor=rdoOr&usrSubjectsFolder%24txtCodes=&usrCommitteesFolder%24cboCommittee=&usrCommitteesFolder%24status=rdoStatusBoth&usrActionsFolder%24actionandor=rdoOr&usrActionsFolder%24txtCodes=&usrActionsFolder%24lastaction=rdoLastActionNo&usrActionsFolder%24dtActionOnDate=&usrActionsFolder%24dtActionFromDate=&usrActionsFolder%24dtActionToDate="
+        }
+    },
+    "response": {
+        "status": 302,
+        "statusText": "Found",
+        "httpVersion": "HTTP/1.1",
+        "headers": [
+            {
+                "name": "Cache-Control",
+                "value": "private"
+            },
+            {
+                "name": "Content-Type",
+                "value": "text/html; charset=utf-8"
+            },
+            {
+                "name": "Location",
+                "value": "/Search/BillSearchResults.aspx?NSP=1&SPL=False&SPC=False&SPA=True&SPS=False&Leg=86&Sess=R&ChamberH=True&ChamberS=True&BillType=B;JR;;;;;&AuthorCode=&SponsorCode=&ASAndOr=O&IsPA=True&IsJA=False&IsCA=False&IsPS=True&IsJS=False&IsCS=False&CmteCode=&CmteStatus=&OnDate=&FromDate=&ToDate=&FromTime=&ToTime=&LastAction=False&Actions=S000;S001;H001;&AAO=O&Subjects=&SAO=&TT=&ID=c8oP4vay6"
+            },
+            {
+                "name": "Server",
+                "value": "Microsoft-IIS/8.5"
+            },
+            {
+                "name": "X-AspNet-Version",
+                "value": "2.0.50727"
+            },
+            {
+                "name": "Set-Cookie",
+                "value": "SessionInfo=UserID=c8oP4vay6; path=/"
+            },
+            {
+                "name": "X-UA-Compatible",
+                "value": "IE=EmulateIE7"
+            },
+            {
+                "name": "Date",
+                "value": "Sat, 12 Jan 2019 17:29:22 GMT"
+            },
+            {
+                "name": "Content-Length",
+                "value": "65776"
+            }
+        ],
+        "cookies": [
+            {
+                "name": "SessionInfo",
+                "value": "UserID=c8oP4vay6"
+            }
+        ],
+        "content": {
+            "mimeType": "text/html; charset=utf-8",
+            "size": 76061,
+            "comment": "Response bodies are not included."
+        },
+        "redirectURL": "/Search/BillSearchResults.aspx?NSP=1&SPL=False&SPC=False&SPA=True&SPS=False&Leg=86&Sess=R&ChamberH=True&ChamberS=True&BillType=B;JR;;;;;&AuthorCode=&SponsorCode=&ASAndOr=O&IsPA=True&IsJA=False&IsCA=False&IsPS=True&IsJS=False&IsCS=False&CmteCode=&CmteStatus=&OnDate=&FromDate=&ToDate=&FromTime=&ToTime=&LastAction=False&Actions=S000;S001;H001;&AAO=O&Subjects=&SAO=&TT=&ID=c8oP4vay6",
+        "headersSize": 676,
+        "bodySize": 12205
+    },
+    "cache": {},
+    "timings": {
+        "blocked": 1,
+        "dns": 1,
+        "connect": 0,
+        "ssl": 0,
+        "send": 0,
+        "wait": 62,
+        "receive": 34
+    },
+    "time": 98,
+    "_securityState": "secure",
+    "serverIPAddress": "204.65.58.42",
+    "connection": "443"
+}
