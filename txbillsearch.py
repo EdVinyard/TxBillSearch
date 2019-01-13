@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse, parse_qs
+import threading
 
 TRACE = False
 
@@ -141,6 +142,7 @@ def parse_search_results_page(page_text):
     '''
     soup = BeautifulSoup(page_text, 'html.parser')
     for icon in soup.find_all(name='img', attrs={'src':'../Images/txicon.gif'}):
+        #    img  a      td
         td = icon.parent.parent
         bill_link = td.contents[3]
         yield bill_link.string.strip()
@@ -153,7 +155,7 @@ def matching_bill_names(session, incomplete_results_uri, id):
         session - a Requests Session
 
         incomplete_results_uri - a BillSearchResults.aspx URI 
-            without the 'ID' query parameter)
+            without the 'ID' query parameter
 
         id - a "fresh" (< 24 hours old) search ID value.
 
