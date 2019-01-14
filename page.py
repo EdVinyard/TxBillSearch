@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 import re
+import threading
 
 
 def _parse(html):
@@ -22,6 +23,52 @@ def _nearest_ancestor_table(element):
             return ancestor
     
     raise ValueError('Element has no <table> ancestor!')
+
+
+class PageSequence(object):
+    '''
+    A sequence of pages of results, displayed on BillSearchResults.aspx,
+    parsed into structured data.  
+    
+    For example, if there are 100 results, BillSearchResults.aspx displays 
+    25 results on a page, so an instance of PageSequence would represent
+    all four pages of results, available through the `PageSequence.pages`
+    property.
+    '''    
+    def __init__(self, http_get, first_page):
+        self._http_get = http_get
+
+        ## lazily load subsequent pages
+        self._pages = [ first_page, ]
+        self._pages_lock = threading.Condition()
+
+    # TODO: Make this class iterable and get rid of this property.
+    @property
+    def pages(self):
+        page_index = 0
+        while page_index < len(self._pages):
+            yield self._pages[page_index]
+            page_index += 1
+        
+        while not self._all_pages_loaded():
+            self._ensure_page_loaded(page_index)
+            yield self._pages[page_index]
+            page_index += 1
+
+    def _all_pages_loaded(self):
+        return self._pages[-1].next_page_uri is None
+
+    def _ensure_page_loaded(self, page_index):
+        if len(self._pages) > page_index:
+            return
+
+        with self._pages_lock:
+            while page_index >= len(self._pages) and not self._all_pages_loaded():
+                last_loaded_page = self._pages[-1]
+                uri = last_loaded_page.next_page_uri
+                # TODO: BUG: Distributed Computing Fallacy #1: The network is reliable.
+                response_body = self._http_get(uri)
+                self._pages.append(Page(response_body))
 
 
 class Page(object):
@@ -85,6 +132,30 @@ class Page(object):
         self.total_result_count = Page._parse_total_result_count(soup)
         self.results = Page._parse_results(soup)
 
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.next_page_uri == other.next_page_uri \
+                and self.total_result_count == other.total_result_count \
+                and self.results == other.results
+        else:
+            return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    FORMAT = '''
+        Page
+            next_page_uri: {next_page_uri}
+            total_result_count: {total_result_count}
+            results: {results}
+        '''
+
+    def __str__(self):
+        return Page.FORMAT.format(**self.__dict__)
+
+    def __repr__(self):
+        return self.__str__()
+
 
 class Result(object):
     '''
@@ -137,3 +208,19 @@ class Result(object):
         ## TODO: last action (e.g., "H Filed")
         ## TODO: version (e.g., "Introduced")
         ## TODO: caption (e.g., "Relating to exempting textbooks... from the sales... tax.")
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            # TODO: BUG: This should compare Bill Text URIs instead of just the name.
+            return self.title == other.title
+        else:
+            return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __str__(self):
+        return self.title
+
+    def __repr__(self):
+        return self.__str__()
