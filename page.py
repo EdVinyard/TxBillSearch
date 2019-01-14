@@ -1,4 +1,5 @@
 from bs4 import BeautifulSoup
+import re
 
 
 def _parse(html):
@@ -18,29 +19,62 @@ def _nearest_ancestor_table(element):
 
 
 class Page(object):
-    def __init__(self, page_text):
-        soup = _parse(page_text)
+    RESULT_COUNT_PATTERN = re.compile(
+        "Bills [\d,]+ through [\d,]+ out of ([\d,]+) matches.", 
+        re.IGNORECASE)
 
-        ## TODO: no results / empty page
+    @staticmethod
+    def _parse_total_result_count(soup):
+        '''
+        Each total result count looks like
+        
+         <span id="lblMatches" style="display:inline-block;">
+             Bills 1 through 25 out of 1,140 matches.
+         </span>
+        '''
+        lbl_str = soup.find(id='lblMatches').string
 
-        ## TODO: total result count
+        if lbl_str is None:
+            return 0
 
-        ## TODO: next page URI
+        m = Page.RESULT_COUNT_PATTERN.search(lbl_str)
+        return int(m.group(1).replace(',', ''))
 
-        # Each result on this page begins with
-        #
-        # <table width="95%">
-        #   <tbody>
-        #     <tr width="100%">
-        #       <td width="15%" nowrap="">
-        #           <a href="#" id="86R-HB 21" ...>
-        #               <img src="../Images/txicon.gif" ...>
-        #
-        self.results = [ 
+    @staticmethod
+    def _parse_results(soup):
+        '''
+        Each result on this page begins with
+        
+         <table width="95%">
+           <tbody>
+             <tr width="100%">
+               <td width="15%" nowrap="">
+                   <a href="#" id="86R-HB 21" ...>
+                       <img src="../Images/txicon.gif" ...>
+        '''
+        return [ 
             Result(_nearest_ancestor_table(txicon))
             for txicon 
             in soup.find_all(name='img', attrs={'src':'../Images/txicon.gif'})
             ]
+
+    @staticmethod
+    def _parse_next_page_uri(soup):
+        img = soup.find(name='img', attrs={'alt':'Navigate to next page'})
+        
+        if img is None:
+            return None
+
+        a = img.parent
+        return a.attrs['href']
+
+    def __init__(self, page_text):
+        soup = _parse(page_text)
+
+        ## TODO: no results / empty page
+        self.next_page_uri = Page._parse_next_page_uri(soup)
+        self.total_result_count = Page._parse_total_result_count(soup)
+        self.results = Page._parse_results(soup)
 
 
 class Result(object):
@@ -50,7 +84,6 @@ class Result(object):
         bill_link = table.find('td').contents[3]
         self.title = bill_link.string.strip()
 
-        ## TODO: title (e.g., "HB 21")
         ## TODO: history URI (e.g., "/BillLookup/History.aspx?LegSess=86R&Bill=HB21")
         ## TODO: actions URI (e.g., "/BillLookup/Actions.aspx?LegSess=86R&Bill=HB%2021")
         ## TODO: text URI (e.g., "/BillLookup/Text.aspx?LegSess=86R&Bill=HB 21")
