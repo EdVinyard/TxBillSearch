@@ -3,6 +3,8 @@ from bs4 import BeautifulSoup
 from urllib.parse import urlparse, parse_qs
 import threading
 
+from page import Page
+
 TRACE = False
 
 if TRACE:
@@ -121,63 +123,18 @@ def new_search_id(session):
     return id
 
 
-def parse_search_results_page(page_text):
-    '''
-    Extract bill names (e.g., "HB 26") from HTML fragments like this:
-    
-        <table width="95%">
-            <tr width="100%">
-                <td nowrap width="15%">
-                    <a href="#" id='86R-HB 26' onClick="SetBillID(this.id); return dropdownmenu(this, event, menu)" onMouseout="delayhidemenu()">
-                        <img src="../Images/txicon.gif" class="noPrint" alt="Click for options"/>
-                    </a> 
-                    <a href=../BillLookup/History.aspx?LegSess=86R&Bill=HB26 target="_new">
-                        HB 26   
-                    </a>
-                </td>
-        ...
-    
-    Start by finding the constant txicon.gif image tag, then navigate to the 
-    bill name.
-    '''
-    soup = BeautifulSoup(page_text, 'html.parser')
-    for icon in soup.find_all(name='img', attrs={'src':'../Images/txicon.gif'}):
-        #    img  a      td
-        td = icon.parent.parent
-        bill_link = td.contents[3]
-        yield bill_link.string.strip()
-
-
-def matching_bill_names(session, incomplete_results_uri, id):
-    '''
-    Run a TX Legislature activity search, given:
-    
-        session - a Requests Session
-
-        incomplete_results_uri - a BillSearchResults.aspx URI 
-            without the 'ID' query parameter
-
-        id - a "fresh" (< 24 hours old) search ID value.
-
-    Generates all bill name strings (e.g., "HB21") from the first page of 
-    results.
-    '''
-    results_uri = incomplete_results_uri + '&ID=' + id
-    results_response = session.get(results_uri)
-    yield from parse_search_results_page(results_response.text)
-
-
 if __name__ == '__main__':
     session = requests.Session()
     id = new_search_id(session)     # <== THE IMPORTANT PART!
     # Substitute this "fresh" ID for the one included in old searches.
 
-    # This is just a very simple demonstration that we can actually get 
-    # search results directly from BillSearchResults.aspx.
-    for bill in matching_bill_names(session, BILL_SEARCH_RESULT_URI, id):
-        print(bill)
+    results_uri = BILL_SEARCH_RESULT_URI + '&ID=' + id
+    results_response = session.get(results_uri)
+    first_page = Page(results_response.text)
+
+    for bill in first_page.results:
+        print(bill.title)
 
 
 ## TODO: encapsulate most of this module into a stateful class
-## TODO: extract all available info for each bill
 ## TODO: lazily iterate over the paged search results
