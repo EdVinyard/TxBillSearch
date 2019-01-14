@@ -3,13 +3,19 @@ import re
 
 
 def _parse(html):
+    '''
+    Internally and in test, prefer this method to calling 
+    the BeautifulSoup constructor directly, so that the
+    parser can be changed out later, if desired.
+    '''
     return BeautifulSoup(html, 'html.parser')
 
 
 def _nearest_ancestor_table(element):
     '''
-    Returns the nearest ancestor of `element` that is a <table> 
-    (not including the supplied element itself).
+    Given a BeautifulSoup element, returns the nearest ancestor 
+    <table> of that element, not including the supplied element 
+    itself.
     '''
     for ancestor in element.parents:
         if ancestor.name == 'table':
@@ -19,6 +25,10 @@ def _nearest_ancestor_table(element):
 
 
 class Page(object):
+    '''
+    A single page of results, displayed on BillSearchResults.aspx,
+    parsed into structured data.
+    '''
     RESULT_COUNT_PATTERN = re.compile(
         "Bills [\d,]+ through [\d,]+ out of ([\d,]+) matches.", 
         re.IGNORECASE)
@@ -71,13 +81,48 @@ class Page(object):
     def __init__(self, page_text):
         soup = _parse(page_text)
 
-        ## TODO: no results / empty page
         self.next_page_uri = Page._parse_next_page_uri(soup)
         self.total_result_count = Page._parse_total_result_count(soup)
         self.results = Page._parse_results(soup)
 
 
 class Result(object):
+    '''
+    An individual result, displayed on BillSearchResults.aspx,
+    parsed into structured data.  An example of the markup follows.
+
+        <table width="95%">
+            <tbody>
+                <tr width="100%">
+                    <td width="15%" nowrap="">
+                        <a href="#" id="86R-HB 21" onclick="SetBillID(this.id); return dropdownmenu(this, event, menu)"
+                            onmouseout="delayhidemenu()">
+                            <img src="../Images/txicon.gif" class="noPrint" alt="Click for options"></a> <a href="../BillLookup/History.aspx?LegSess=86R&amp;Bill=HB21"
+                            target="_new">
+                            HB 21
+                        </a>
+                    </td>
+                    <td width="55%" valign="bottom" nowrap="" align="left"><strong>Author</strong>:
+                        Canales
+                    </td>
+                    <td width="35%" valign="bottom" nowrap="" align="left"></td>
+                </tr>
+                <tr>
+                    <td width="130" height="12"><strong>Last Action</strong>:&nbsp;</td>
+                    <td colspan="2" height="12"><em>11/12/2018 H Filed</em></td>
+                </tr>
+                <tr>
+                    <td width="130" nowrap=""><strong>Caption Version</strong>:</td>
+                    <td colspan="2">Introduced</td>
+                </tr>
+                <tr>
+                    <td width="130" valign="top"><strong>Caption</strong>:</td>
+                    <td colspan="2">Relating to exempting textbooks purchased, used, or consumed by university and college
+                        students from the sales and use tax for limited periods.</td>
+                </tr>
+            </tbody>
+        </table>    
+    '''
     def __init__(self, table):
         self.table = table
 
