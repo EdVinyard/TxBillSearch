@@ -1,6 +1,10 @@
 from bs4 import BeautifulSoup
 import re
 import threading
+import urllib.parse
+
+
+DEBUG = True
 
 
 def _parse(html):
@@ -23,6 +27,25 @@ def _nearest_ancestor_table(element):
             return ancestor
     
     raise ValueError('Element has no <table> ancestor!')
+
+
+class SearchResults(object):
+    def __init__(self, page_sequence):
+        self.page_seq = page_sequence
+
+    @property
+    def count(self):
+        return self.page_seq.total_result_count
+
+    @property
+    def bills(self):
+        '''
+        A continuous iterator over the bills in the pages of results.
+        Subsequent pages are loaded lazily, as the iterator "touches"
+        them for the first time.
+        '''
+        for page in self.page_seq.pages:
+            yield from page.results
 
 
 class PageSequence(object):
@@ -55,6 +78,10 @@ class PageSequence(object):
             yield self._pages[page_index]
             page_index += 1
 
+    @property
+    def total_result_count(self):
+        return self._pages[0].total_result_count
+
     def _all_pages_loaded(self):
         return self._pages[-1].next_page_uri is None
 
@@ -66,9 +93,13 @@ class PageSequence(object):
             while page_index >= len(self._pages) and not self._all_pages_loaded():
                 last_loaded_page = self._pages[-1]
                 uri = last_loaded_page.next_page_uri
+                
+                if DEBUG:
+                    print('fetching {}...'.format(uri))
+
                 # TODO: BUG: Distributed Computing Fallacy #1: The network is reliable.
                 response_body = self._http_get(uri)
-                self._pages.append(Page(response_body))
+                self._pages.append(Page(response_body, uri))
 
 
 class Page(object):
@@ -116,19 +147,30 @@ class Page(object):
             ]
 
     @staticmethod
-    def _parse_next_page_uri(soup):
+    def _parse_next_page_uri(soup, absolute_uri):
+        '''
+        Each "Next Page" link looks like
+
+            <a href="BillSearchResults.aspx?CP=2&...">
+                <img valign="bottom" 
+                     src="../Images/icon_next_active.gif" 
+                     alt="Navigate to next page">
+            </a>
+        '''
         img = soup.find(name='img', attrs={'alt':'Navigate to next page'})
         
         if img is None:
             return None
 
         a = img.parent
-        return a.attrs['href']
+        relative_uri = a.attrs['href'] # e.g., "BillSearchResults.aspx?CP=3&..."
+        return urllib.parse.urljoin(absolute_uri, relative_uri)
 
-    def __init__(self, page_text):
+    def __init__(self, page_text, absolute_uri):
         soup = _parse(page_text)
 
-        self.next_page_uri = Page._parse_next_page_uri(soup)
+        self.absolute_uri = absolute_uri
+        self.next_page_uri = Page._parse_next_page_uri(soup, absolute_uri)
         self.total_result_count = Page._parse_total_result_count(soup)
         self.results = Page._parse_results(soup)
 

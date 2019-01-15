@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from urllib.parse import urlparse, parse_qs
 import threading
 
-from page import Page
+from page import Page, PageSequence, SearchResults
 
 TRACE = False
 
@@ -76,6 +76,8 @@ BILL_SEARCH_RESULT_URI = ('https://capitol.texas.gov/Search/BillSearchResults.as
     '&TT=')
     # '&ID=s36alcgKa' add the ID query param in dynamically, later
 
+RESULT_COUNT_11_URI = 'https://capitol.texas.gov/Search/BillSearchResults.aspx?NSP=2&SPL=True&SPC=False&SPA=True&SPS=False&Leg=86&Sess=R&ChamberH=True&ChamberS=True&BillType=B;JR;;;;;&AuthorCode=A2100&SponsorCode=&ASAndOr=O&IsPA=True&IsJA=False&IsCA=False&IsPS=True&IsJS=False&IsCS=False&CmteCode=&CmteStatus=&OnDate=&FromDate=11/1/2018&ToDate=1/1/2019&FromTime=&ToTime=&LastAction=False&Actions=H001;&AAO=O&Subjects=&SAO=&TT='
+RESULT_COUNT_820_URI = 'https://capitol.texas.gov/Search/BillSearchResults.aspx?NSP=1&SPL=False&SPC=False&SPA=True&SPS=False&Leg=86&Sess=R&ChamberH=True&ChamberS=True&BillType=B;JR;;;;;&AuthorCode=&SponsorCode=&ASAndOr=O&IsPA=True&IsJA=False&IsCA=False&IsPS=True&IsJS=False&IsCS=False&CmteCode=&CmteStatus=&OnDate=&FromDate=&ToDate=&FromTime=&ToTime=&LastAction=False&Actions=H001;&AAO=O&Subjects=&SAO=&TT='
 
 def hidden_input_value(soup, id):
     return soup \
@@ -125,15 +127,32 @@ def new_search_id(session):
 
 if __name__ == '__main__':
     session = requests.Session()
+
+    def http_get(uri):
+        r = session.get(uri, allow_redirects=False)
+
+        if r.status_code != 200:
+            raise RuntimeError(
+                'Unexpected response HTTP status {} while fetching {}'.format(
+                    r.status_code,
+                    uri))
+
+        return r.text
+
     id = new_search_id(session)     # <== THE IMPORTANT PART!
     # Substitute this "fresh" ID for the one included in old searches.
 
-    results_uri = BILL_SEARCH_RESULT_URI + '&ID=' + id
-    results_response = session.get(results_uri)
-    first_page = Page(results_response.text)
+    results_uri = RESULT_COUNT_820_URI + '&ID=' + id
+    first_page = Page(http_get(results_uri), results_uri)
+    page_seq = PageSequence(http_get, first_page)
+    search_results = SearchResults(page_seq)
 
-    for bill in first_page.results:
-        print(bill.title)
+    print('{} bills found...'.format(search_results.count))
+    for index, bill in enumerate(search_results.bills):
+        if index > 73:
+            break
+
+        print(bill)
 
 
 ## TODO: encapsulate most of this module into a stateful class

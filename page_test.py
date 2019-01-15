@@ -2,6 +2,8 @@ from page import _parse, _nearest_ancestor_table, Page, Result, PageSequence
 import unittest
 
 
+BILL_SEARCH_RESULTS_ABS_URI = 'https://capitol.texas.gov/Search/BillSearchResults.aspx'
+
 FULL_RESULT_PAGE_FILENAME = 'Test/BillSearchResults.aspx.FullPage.html'
 with open(FULL_RESULT_PAGE_FILENAME, 'r') as f:
     FULL_RESULT_PAGE_HTML = f.read()
@@ -90,24 +92,24 @@ class TestPage(unittest.TestCase):
 
     def test_total_result_count(self):
         # Act
-        actual = Page(FULL_RESULT_PAGE_HTML)
+        actual = Page(FULL_RESULT_PAGE_HTML, BILL_SEARCH_RESULTS_ABS_URI)
 
         # Assert
         self.assertEqual(actual.total_result_count, 1140)
 
     def test_next_page_uri(self):
         # Arrange
-        expected = 'BillSearchResults.aspx?CP=2&shCmte=False&shComp=False&shSumm=False&NSP=1&SPL=False&SPC=False&SPA=True&SPS=False&Leg=86&Sess=R&ChamberH=True&ChamberS=True&BillType=B;JR;;;;;&AuthorCode=&SponsorCode=&ASAndOr=O&IsPA=True&IsJA=False&IsCA=False&IsPS=True&IsJS=False&IsCS=False&CmteCode=&CmteStatus=&OnDate=&FromDate=&ToDate=&FromTime=&ToTime=&LastAction=False&Actions=S000;S001;H001;&AAO=O&Subjects=&SAO=&TT=&ID=jNkeLN5Sp'
+        expected = 'https://capitol.texas.gov/Search/BillSearchResults.aspx?CP=2&shCmte=False&shComp=False&shSumm=False&NSP=1&SPL=False&SPC=False&SPA=True&SPS=False&Leg=86&Sess=R&ChamberH=True&ChamberS=True&BillType=B;JR;;;;;&AuthorCode=&SponsorCode=&ASAndOr=O&IsPA=True&IsJA=False&IsCA=False&IsPS=True&IsJS=False&IsCS=False&CmteCode=&CmteStatus=&OnDate=&FromDate=&ToDate=&FromTime=&ToTime=&LastAction=False&Actions=S000;S001;H001;&AAO=O&Subjects=&SAO=&TT=&ID=jNkeLN5Sp'
 
         # Act
-        actual = Page(FULL_RESULT_PAGE_HTML)
+        actual = Page(FULL_RESULT_PAGE_HTML, BILL_SEARCH_RESULTS_ABS_URI)
 
         # Assert
         self.assertEqual(actual.next_page_uri, expected)
 
     def test_next_page_uri_last_page(self):
         # Act 
-        last_page = Page(RESULT_LAST_PAGE_HTML)
+        last_page = Page(RESULT_LAST_PAGE_HTML, BILL_SEARCH_RESULTS_ABS_URI)
         actual = last_page.next_page_uri
 
         # Assert
@@ -115,7 +117,7 @@ class TestPage(unittest.TestCase):
 
     def test_results(self):
         # Act
-        actual = Page(FULL_RESULT_PAGE_HTML)
+        actual = Page(FULL_RESULT_PAGE_HTML, BILL_SEARCH_RESULTS_ABS_URI)
 
         # Assert
         self.assertEqual(len(actual.results), 25)
@@ -124,7 +126,7 @@ class TestPage(unittest.TestCase):
 
     def test_no_results(self):
         # Act 
-        actual = Page(NO_RESULTS_PAGE_HTML)
+        actual = Page(NO_RESULTS_PAGE_HTML, BILL_SEARCH_RESULTS_ABS_URI)
 
         # Assert
         self.assertEqual(actual.total_result_count, 0)
@@ -138,8 +140,8 @@ class TestPagedResults(unittest.TestCase):
         first_page_html = FULL_RESULT_PAGE_HTML
         last_page_html = RESULT_LAST_PAGE_HTML
 
-        first_page = Page(first_page_html)
-        last_page = Page(last_page_html)
+        first_page = Page(first_page_html, BILL_SEARCH_RESULTS_ABS_URI)
+        last_page = Page(last_page_html, BILL_SEARCH_RESULTS_ABS_URI)
         fake_http_get_call_count = 0
 
         def fake_http_get(uri):
@@ -158,7 +160,7 @@ class TestPagedResults(unittest.TestCase):
     def test_single_page(self):
         # Arrange
         only_page_html = RESULT_LAST_PAGE_HTML
-        only_page = Page(only_page_html)
+        only_page = Page(only_page_html, BILL_SEARCH_RESULTS_ABS_URI)
 
         def fake_http_get(uri):
             raise RuntimeError('This should never be called!')
@@ -175,8 +177,8 @@ class TestPagedResults(unittest.TestCase):
         first_page_html = FULL_RESULT_PAGE_HTML
         last_page_html = RESULT_LAST_PAGE_HTML
 
-        first_page = Page(first_page_html)
-        last_page = Page(last_page_html)
+        first_page = Page(first_page_html, BILL_SEARCH_RESULTS_ABS_URI)
+        last_page = Page(last_page_html, BILL_SEARCH_RESULTS_ABS_URI)
         fake_http_get_call_count = 0
 
         def fake_http_get(uri):
@@ -199,6 +201,39 @@ class TestPagedResults(unittest.TestCase):
         self.assertIs(pages1[0], pages2[0])
         self.assertIs(pages1[1], pages2[1])
         self.assertEqual(fake_http_get_call_count, 1)
+
+
+class TestSearchResults(unittest.TestCase):
+
+    class Generator(object):
+        def __init__(self, start, stop):
+            self.start = start
+            self.stop = stop
+
+        def items(self):
+            for i in range(self.start, self.stop):
+                yield i
+
+    class NestedGenerator(object):
+        def __init__(self, *args):
+            self.gens = args
+
+        def items(self):
+            for g in self.gens:
+                yield from g.items()
+
+    def test_nested_generator(self):
+        # Arrange
+        gen10 = TestSearchResults.Generator(0, 10)
+        gen20 = TestSearchResults.Generator(10, 20)
+        nestedgen = TestSearchResults.NestedGenerator(gen10, gen20)
+
+        # Act
+        actual = [ i for i in nestedgen.items() ]
+
+        # Assert
+        expected = [ x for x in range(20) ]
+        self.assertEqual(actual, expected)
 
 
 if __name__ == '__main__':
