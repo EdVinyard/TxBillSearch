@@ -4,7 +4,7 @@ import threading
 import urllib.parse
 
 
-DEBUG = True
+DEBUG = False
 
 
 def _parse(html):
@@ -97,7 +97,6 @@ class PageSequence(object):
                 if DEBUG:
                     print('fetching {}...'.format(uri))
 
-                # TODO: BUG: Distributed Computing Fallacy #1: The network is reliable.
                 response_body = self._http_get(uri)
                 self._pages.append(Page(response_body, uri))
 

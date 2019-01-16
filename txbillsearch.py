@@ -5,9 +5,9 @@ import threading
 
 from page import Page, PageSequence, SearchResults
 
-TRACE = False
+DEBUG = False
 
-if TRACE:
+if DEBUG:
     from pprint import pprint
 
 BILL_SEARCH_URI = "https://capitol.texas.gov/Search/BillSearch.aspx"
@@ -79,6 +79,7 @@ BILL_SEARCH_RESULT_URI = ('https://capitol.texas.gov/Search/BillSearchResults.as
 RESULT_COUNT_11_URI = 'https://capitol.texas.gov/Search/BillSearchResults.aspx?NSP=2&SPL=True&SPC=False&SPA=True&SPS=False&Leg=86&Sess=R&ChamberH=True&ChamberS=True&BillType=B;JR;;;;;&AuthorCode=A2100&SponsorCode=&ASAndOr=O&IsPA=True&IsJA=False&IsCA=False&IsPS=True&IsJS=False&IsCS=False&CmteCode=&CmteStatus=&OnDate=&FromDate=11/1/2018&ToDate=1/1/2019&FromTime=&ToTime=&LastAction=False&Actions=H001;&AAO=O&Subjects=&SAO=&TT='
 RESULT_COUNT_820_URI = 'https://capitol.texas.gov/Search/BillSearchResults.aspx?NSP=1&SPL=False&SPC=False&SPA=True&SPS=False&Leg=86&Sess=R&ChamberH=True&ChamberS=True&BillType=B;JR;;;;;&AuthorCode=&SponsorCode=&ASAndOr=O&IsPA=True&IsJA=False&IsCA=False&IsPS=True&IsJS=False&IsCS=False&CmteCode=&CmteStatus=&OnDate=&FromDate=&ToDate=&FromTime=&ToTime=&LastAction=False&Actions=H001;&AAO=O&Subjects=&SAO=&TT='
 
+
 def hidden_input_value(soup, id):
     return soup \
         .find(name='input', attrs={'type':'hidden','id':id}) \
@@ -105,7 +106,7 @@ def postback_data(cold_response):
     post_data[VIEWSTATE_ID] = hidden_input_value(soup, VIEWSTATE_ID)
     post_data[PREVPAGE_ID]  = hidden_input_value(soup, PREVPAGE_ID)
     
-    if TRACE: pprint(post_data)
+    if DEBUG: pprint(post_data)
     
     return post_data
 
@@ -125,19 +126,25 @@ def new_search_id(session):
     return id
 
 
-if __name__ == '__main__':
-    session = requests.Session()
-
+def http_get_factory(requests_session):
     def http_get(uri):
-        r = session.get(uri, allow_redirects=False)
+        # TODO: BUG: Distributed Computing Fallacy #1: The network is reliable.
+        response = session.get(uri, allow_redirects=False)
 
-        if r.status_code != 200:
+        if response.status_code != 200:
             raise RuntimeError(
                 'Unexpected response HTTP status {} while fetching {}'.format(
-                    r.status_code,
+                    response.status_code,
                     uri))
 
-        return r.text
+        return response.text
+    
+    return http_get
+
+
+if __name__ == '__main__':
+    session = requests.Session()
+    http_get = http_get_factory(session)
 
     id = new_search_id(session)     # <== THE IMPORTANT PART!
     # Substitute this "fresh" ID for the one included in old searches.
