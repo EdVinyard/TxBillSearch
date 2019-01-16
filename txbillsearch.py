@@ -5,6 +5,7 @@ import threading
 
 from page import Page, PageSequence, SearchResults
 
+# TODO: Use logging module instead.
 DEBUG = False
 
 if DEBUG:
