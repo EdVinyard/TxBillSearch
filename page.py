@@ -279,6 +279,9 @@ class Result(object):
         self.title, self.history_uri = Result._parse_bill_link(tds, absolute_uri)
         self.last_action, self.last_action_date = Result._parse_last_action(tds)
 
+        ## The following URIs are constructed by Javascript in the page, not
+        ## included directly.  They'll be more brittle than the other attributes,
+        ## so better to omit 'em 'til they're really needed.
         ## TODO: actions URI (e.g., "/BillLookup/Actions.aspx?LegSess=86R&Bill=HB%2021")
         ## TODO: text URI (e.g., "/BillLookup/Text.aspx?LegSess=86R&Bill=HB 21")
 
