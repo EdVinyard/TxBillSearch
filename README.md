@@ -12,10 +12,11 @@ $ pipenv install
 ... installs Requests and BeatifulSoup 4 ...
 $ pipenv shell
 (TxLegOnlineScraper3-_s_xUwQa) $ python txbillsearch.py
-HB 21
-HB 22
+1604 bills found...
+result 1 of 1604: HB 1 by Zerwas H Filed 2019-01-23
+result 2 of 1604: HB 20 by Capriglione H Filed 2019-01-24
 ...
-HB 45
+result 41 of 1604: HB 59 by Swanson H Filed 2018-11-12
 (TxLegOnlineScraper3-_s_xUwQa) $ exit # from the pipenv environment
 $
 ```
@@ -24,20 +25,25 @@ $
 
 The `if __name__ == '__main__':` block at the end of
 [txbillsearch.py](txbillsearch.py) gives a notion of how to use this module.
-The most useful exposed function is `new_search_id()`. Use a [Requests
-Session](http://docs.python-requests.org/en/master/user/advanced/#session-objects)
-to simplify cookie handling and connection management.
+The most useful exposed function is `search()`.
 
 ```python
-if __name__ == '__main__':
-    session = requests.Session()
-    id = new_search_id(session)     # <== THE IMPORTANT PART!
-    # Substitute this "fresh" ID for the one included in old searches.
+# NOTICE: We chopped off the 'ID=abc123DEF' query param!
+SESSION_86_BILLS = 'https://capitol.texas.gov/Search/BillSearchResults.aspx?NSP=1&SPL=False&SPC=False&SPA=True&SPS=False&Leg=86&Sess=R&ChamberH=True&ChamberS=True&BillType=B;JR;CR;R;;;&AuthorCode=&SponsorCode=&ASAndOr=O&IsPA=True&IsJA=False&IsCA=False&IsPS=True&IsJS=False&IsCS=False&CmteCode=&CmteStatus=&OnDate=&FromDate=&ToDate=&FromTime=&ToTime=&LastAction=False&Actions=S000;S001;H001;&AAO=O&Subjects=&SAO=&TT=' # NO ID!
 
-    # This is just a very simple demonstration that we can actually get 
-    # search results directly from BillSearchResults.aspx.
-    for bill in matching_bill_names(session, BILL_SEARCH_RESULT_URI, id):
-        print(bill)
+id, search_results = search(SESSION_86_BILLS)
+
+# This is just a very simple demonstration that we can actually get 
+# search results directly from BillSearchResults.aspx.
+print('{} bills found...'.format(search_results.count))
+for index, bill in enumerate(search_results.bills):
+    if index > 40:
+        break
+
+    print('result {} of {}: {}'.format(
+        index+1, 
+        search_results.count, 
+        bill))
 ```
 
 ## Technical Details

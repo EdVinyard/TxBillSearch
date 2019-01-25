@@ -137,50 +137,22 @@ def search(search_results_uri_without_id, search_id=None, requests_session=None)
 
 
 if __name__ == '__main__':
-    BILL_SEARCH_RESULT_URI = ('https://capitol.texas.gov/Search/BillSearchResults.aspx' +
-        '?NSP=1' + 
-        '&SPL=False' + 
-        '&SPC=False' + 
-        '&SPA=False' + 
-        '&SPS=True' + 
-        '&Leg=86' + 
-        '&Sess=R' + 
-        '&ChamberH=True' + 
-        '&ChamberS=True' + 
-        '&BillType=B;JR;;;;;' + 
-        '&AuthorCode=' + 
-        '&SponsorCode=' + 
-        '&ASAndOr=O' + 
-        '&IsPA=True' + 
-        '&IsJA=False' + 
-        '&IsCA=False' + 
-        '&IsPS=True' + 
-        '&IsJS=False' + 
-        '&IsCS=False' + 
-        '&CmteCode=' + 
-        '&CmteStatus=' + 
-        '&OnDate=' + 
-        '&FromDate=' + 
-        '&ToDate=' + 
-        '&FromTime=' + 
-        '&ToTime=' + 
-        '&LastAction=False' + 
-        '&Actions=' + 
-        '&AAO=' + 
-        '&Subjects=I0320;I0013;I0760;I0755;I0002;S0443;S0367;S0496;I0875;I0885;I0870;' + 
-        '&SAO=O' + 
-        '&TT=')
-        # '&ID=s36alcgKa' add the ID query param in dynamically, later
-    RESULT_COUNT_11_URI = 'https://capitol.texas.gov/Search/BillSearchResults.aspx?NSP=2&SPL=True&SPC=False&SPA=True&SPS=False&Leg=86&Sess=R&ChamberH=True&ChamberS=True&BillType=B;JR;;;;;&AuthorCode=A2100&SponsorCode=&ASAndOr=O&IsPA=True&IsJA=False&IsCA=False&IsPS=True&IsJS=False&IsCS=False&CmteCode=&CmteStatus=&OnDate=&FromDate=11/1/2018&ToDate=1/1/2019&FromTime=&ToTime=&LastAction=False&Actions=H001;&AAO=O&Subjects=&SAO=&TT='
-    RESULT_COUNT_820_URI = 'https://capitol.texas.gov/Search/BillSearchResults.aspx?NSP=1&SPL=False&SPC=False&SPA=True&SPS=False&Leg=86&Sess=R&ChamberH=True&ChamberS=True&BillType=B;JR;;;;;&AuthorCode=&SponsorCode=&ASAndOr=O&IsPA=True&IsJA=False&IsCA=False&IsPS=True&IsJS=False&IsCS=False&CmteCode=&CmteStatus=&OnDate=&FromDate=&ToDate=&FromTime=&ToTime=&LastAction=False&Actions=H001;&AAO=O&Subjects=&SAO=&TT='
+    # NOTICE: We chopped off the 'ID=cMVddWbvD' query param!
+    SESSION_86_BILLS = 'https://capitol.texas.gov/Search/BillSearchResults.aspx?NSP=1&SPL=False&SPC=False&SPA=True&SPS=False&Leg=86&Sess=R&ChamberH=True&ChamberS=True&BillType=B;JR;CR;R;;;&AuthorCode=&SponsorCode=&ASAndOr=O&IsPA=True&IsJA=False&IsCA=False&IsPS=True&IsJS=False&IsCS=False&CmteCode=&CmteStatus=&OnDate=&FromDate=&ToDate=&FromTime=&ToTime=&LastAction=False&Actions=S000;S001;H001;&AAO=O&Subjects=&SAO=&TT=' # NO ID!
 
-    id, search_results = search(RESULT_COUNT_820_URI)
+    id, search_results = search(SESSION_86_BILLS)
+
+    # This is just a very simple demonstration that we can actually get 
+    # search results directly from BillSearchResults.aspx.
     print('{} bills found...'.format(search_results.count))
     for index, bill in enumerate(search_results.bills):
-        if index > 73:
+        if index > 40:
             break
 
-        print(bill)
+        print('result {} of {}: {}'.format(
+            index+1, 
+            search_results.count, 
+            bill))
 
 
 ## TODO: encapsulate most of this module into a stateful class
