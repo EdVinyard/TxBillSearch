@@ -1,5 +1,6 @@
 from page import _parse, _nearest_ancestor_table, Page, Result, PageSequence
 import unittest
+import datetime
 
 
 BILL_SEARCH_RESULTS_ABS_URI = 'https://capitol.texas.gov/Search/BillSearchResults.aspx'
@@ -84,8 +85,39 @@ class TestResult(unittest.TestCase):
         TestResult.result_table = _nearest_ancestor_table(first_txicon)
 
     def test_title(self):
-        actual = Result(TestResult.result_table)
+        actual = Result(TestResult.result_table, BILL_SEARCH_RESULTS_ABS_URI)
         self.assertEqual(actual.title, 'HB 21')
+
+    def test_history_uri(self):
+        actual = Result(TestResult.result_table, BILL_SEARCH_RESULTS_ABS_URI)
+        self.assertEqual(
+            actual.history_uri,
+            'https://capitol.texas.gov/BillLookup/History.aspx?LegSess=86R&Bill=HB21')
+
+    def test_author(self):
+        actual = Result(TestResult.result_table, BILL_SEARCH_RESULTS_ABS_URI)
+        self.assertEqual(actual.author, 'Canales')
+
+    def test_caption_version(self):
+        actual = Result(TestResult.result_table, BILL_SEARCH_RESULTS_ABS_URI)
+
+        tds = [ td for td in TestResult.result_table.find_all('td') ]
+
+        self.assertEqual(actual.caption_version, 'Introduced')
+
+    def test_caption(self):
+        actual = Result(TestResult.result_table, BILL_SEARCH_RESULTS_ABS_URI)
+        self.assertEqual(
+            actual.caption,
+            'Relating to exempting textbooks purchased, used, or consumed by university and college students from the sales and use tax for limited periods.')
+
+    def test_last_action(self):
+        actual = Result(TestResult.result_table, BILL_SEARCH_RESULTS_ABS_URI)
+        self.assertEqual(actual.last_action, 'H Filed')
+
+    def test_last_action_date(self):
+        actual = Result(TestResult.result_table, BILL_SEARCH_RESULTS_ABS_URI)
+        self.assertEqual(actual.last_action_date, datetime.date(2018, 11, 12))
 
 
 class TestPage(unittest.TestCase):

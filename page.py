@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 import re
+import datetime
 import threading
 import urllib.parse
 
@@ -128,7 +129,7 @@ class Page(object):
         return int(m.group(1).replace(',', ''))
 
     @staticmethod
-    def _parse_results(soup):
+    def _parse_results(soup, absolute_uri):
         '''
         Each result on this page begins with
         
@@ -140,7 +141,7 @@ class Page(object):
                        <img src="../Images/txicon.gif" ...>
         '''
         return [ 
-            Result(_nearest_ancestor_table(txicon))
+            Result(_nearest_ancestor_table(txicon), absolute_uri)
             for txicon 
             in soup.find_all(name='img', attrs={'src':'../Images/txicon.gif'})
             ]
@@ -171,7 +172,7 @@ class Page(object):
         self.absolute_uri = absolute_uri
         self.next_page_uri = Page._parse_next_page_uri(soup, absolute_uri)
         self.total_result_count = Page._parse_total_result_count(soup)
-        self.results = Page._parse_results(soup)
+        self.results = Page._parse_results(soup, absolute_uri)
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
@@ -209,8 +210,9 @@ class Result(object):
                     <td width="15%" nowrap="">
                         <a href="#" id="86R-HB 21" onclick="SetBillID(this.id); return dropdownmenu(this, event, menu)"
                             onmouseout="delayhidemenu()">
-                            <img src="../Images/txicon.gif" class="noPrint" alt="Click for options"></a> <a href="../BillLookup/History.aspx?LegSess=86R&amp;Bill=HB21"
-                            target="_new">
+                            <img src="../Images/txicon.gif" class="noPrint" alt="Click for options">
+                        </a>
+                        <a href="../BillLookup/History.aspx?LegSess=86R&amp;Bill=HB21" target="_new">
                             HB 21
                         </a>
                     </td>
@@ -235,20 +237,45 @@ class Result(object):
             </tbody>
         </table>    
     '''
-    def __init__(self, table):
+
+    _AUTHOR_PATTERN = re.compile('\s*:\s*(.*)\s*',) # e.g., ": \n Canales"
+
+    @staticmethod
+    def _parse_author(tds):
+        m = Result._AUTHOR_PATTERN.match(tds[1].contents[1])
+        return m.group(1)
+
+    @staticmethod
+    def _parse_bill_link(tds, absolute_uri):
+        bill_link = tds[0].contents[3]
+        title = bill_link.string.strip()
+        relative_history_uri = bill_link.attrs['href']
+        abs_history_uri = urllib.parse.urljoin(absolute_uri, relative_history_uri)
+        return title, abs_history_uri
+
+    _LAST_ACTION_PATTERN = re.compile('\s*(\d+/\d+/\d+)(.*)\s*')
+
+    @staticmethod
+    def _parse_last_action(tds):
+        action_and_date_str = ''.join(s for s in tds[4].strings)
+        m = Result._LAST_ACTION_PATTERN.match(action_and_date_str)
+        action = m.group(2).strip()
+        date_str = m.group(1)
+        date = datetime.datetime.strptime(date_str, '%m/%d/%Y').date()
+        return action, date
+
+    def __init__(self, table, absolute_uri):
         self.table = table
+        tds = [ td for td in table.find_all('td') ]
 
-        bill_link = table.find('td').contents[3]
-        self.title = bill_link.string.strip()
+        self.author = Result._parse_author(tds)
+        self.caption_version = tds[6].string.strip()
+        self.caption = tds[8].string.strip()
+        self.title, self.history_uri = Result._parse_bill_link(tds, absolute_uri)
+        self.last_action, self.last_action_date = Result._parse_last_action(tds)
 
-        ## TODO: history URI (e.g., "/BillLookup/History.aspx?LegSess=86R&Bill=HB21")
         ## TODO: actions URI (e.g., "/BillLookup/Actions.aspx?LegSess=86R&Bill=HB%2021")
         ## TODO: text URI (e.g., "/BillLookup/Text.aspx?LegSess=86R&Bill=HB 21")
-        ## TODO: author (e.g., "Canales")
-        ## TODO: last action date (e.g., "11/12/2018")
-        ## TODO: last action (e.g., "H Filed")
-        ## TODO: version (e.g., "Introduced")
-        ## TODO: caption (e.g., "Relating to exempting textbooks... from the sales... tax.")
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
