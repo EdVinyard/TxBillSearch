@@ -284,8 +284,7 @@ class Result(object):
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
-            # TODO: BUG: This should compare Bill Text URIs instead of just the name.
-            return self.title == other.title
+            return self.history_uri == other.history_uri
         else:
             return False
 
