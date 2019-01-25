@@ -238,12 +238,17 @@ class Result(object):
         </table>    
     '''
 
-    _AUTHOR_PATTERN = re.compile('\s*:\s*(.*)\s*',) # e.g., ": \n Canales"
+    '''
+    A colon followed by whitespace and the author(s) name(s).
+
+    Example:  ":\n\t Romero, Jr. | et al.\n\t"
+    '''
+    _AUTHOR_PATTERN = re.compile('\s*:\s*(.*)\s*') 
 
     @staticmethod
     def _parse_author(tds):
         m = Result._AUTHOR_PATTERN.match(tds[1].contents[1])
-        return m.group(1)
+        return m.group(1).strip()
 
     @staticmethod
     def _parse_bill_link(tds, absolute_uri):
@@ -288,7 +293,7 @@ class Result(object):
         return not self.__eq__(other)
 
     def __str__(self):
-        return self.title
+        return '{title} by {author} {last_action} {last_action_date}'.format(**self.__dict__)
 
     def __repr__(self):
         return self.__str__()

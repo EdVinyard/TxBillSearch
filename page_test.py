@@ -94,6 +94,17 @@ class TestResult(unittest.TestCase):
             actual.history_uri,
             'https://capitol.texas.gov/BillLookup/History.aspx?LegSess=86R&Bill=HB21')
 
+    def test_author_pattern(self):
+        '''
+        Ensure that the author regular expression handles whitespace and
+        punctuation in the author's name(s).
+        '''
+        input = ''':
+					 Romero, Jr. | et al.
+            '''
+        m = Result._AUTHOR_PATTERN.match(input)
+        self.assertEqual(m.group(1), 'Romero, Jr. | et al.')
+
     def test_author(self):
         actual = Result(TestResult.result_table, BILL_SEARCH_RESULTS_ABS_URI)
         self.assertEqual(actual.author, 'Canales')
