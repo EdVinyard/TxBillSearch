@@ -1,5 +1,6 @@
 *.pyc
-node_modules
 .vscode
-scratchpad.py
 __pycache__
+build
+dist
+txbillsearch.egg-info

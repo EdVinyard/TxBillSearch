@@ -258,6 +258,11 @@ class Result(object):
         abs_history_uri = urllib.parse.urljoin(absolute_uri, relative_history_uri)
         return title, abs_history_uri
 
+    '''
+    The date of the last action and the action taken.
+
+    Example: "01/24/2019 H Filed"
+    '''
     _LAST_ACTION_PATTERN = re.compile('\s*(\d+/\d+/\d+)(.*)\s*')
 
     @staticmethod

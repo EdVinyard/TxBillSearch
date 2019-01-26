@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from urllib.parse import urlparse, parse_qs
 import threading
 
-from page import Page, PageSequence, SearchResults
+from .page import Page, PageSequence, SearchResults
 
 # TODO: Use logging module instead.
 DEBUG = False
