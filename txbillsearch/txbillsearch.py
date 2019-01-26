@@ -151,16 +151,7 @@ def _query_without_id(uri):
 
 def search(search_results_uri, requests_session=None):
     '''
-    Repeats a Texas Legislature Bill Search and returns a tuple of 
-    (search_id, search_results).
-
-        search_results_uri - the absolute URI of your BillSearchResults.aspx 
-            page, including all query parameters.  For example, 
-            "https://capitol.texas.gov/Search/BillSearchResults.aspx?NSP=1&SPL=False&...&TT="
-
-        requests_session (OPTIONAL) - a Requests library Session object, if you
-            are using one.  If you omit this parameter, a new Session will be
-            created automatically.
+    DEPRECATED: prefer txbillsearch.Search class
     '''
     session = requests_session if requests_session else requests.Session()
     http_get = _http_get_factory(session)
@@ -174,6 +165,43 @@ def search(search_results_uri, requests_session=None):
     return id, search_results
 
 
+class Search(object):
+    '''
+    repeat a Texas Legislature Bill Search
+    '''
+
+    def __init__(self, search_results_uri, requests_session=None):
+        '''
+        search_results_uri - the absolute URI of your BillSearchResults.aspx 
+            page, including all query parameters.  For example, 
+            "https://capitol.texas.gov/Search/BillSearchResults.aspx?NSP=1&SPL=False&...&TT="
+
+        requests_session (OPTIONAL) - a Requests library Session object, if you
+            are using one.  If you omit this parameter, a new Session will be
+            created automatically.
+        '''
+        self.search_results_uri = search_results_uri
+        self.session = requests_session if requests_session else requests.Session()
+        self.id, self.search_results = search(search_results_uri, self.session)
+
+    @property
+    def results(self):
+        '''
+        Returns a txbillsearch.page.Result generator that allows iteration
+        through all the search results.  Makes HTTP requests as necessary
+        to retrieve subsequent pages of search results.
+        '''
+        return self.search_results.bills
+
+    @property
+    def result_count(self):
+        '''
+        The number of bills matching the search criteria supplied to
+        the constructor.
+        '''
+        return self.search_results.count
+
+
 if __name__ == '__main__':
     import sys
     capriglione_finance = 'https://capitol.texas.gov/Search/BillSearch.aspx?NSP=3&SPL=True&SPC=False&SPA=True&SPS=True&Leg=86&Sess=R&ChamberH=True&ChamberS=True&BillType=B;JR;CR;R;;;&AuthorCode=A2345&SponsorCode=&ASAndOr=O&IsPA=True&IsJA=False&IsCA=False&IsPS=True&IsJS=False&IsCS=False&CmteCode=&CmteStatus=&OnDate=&FromDate=&ToDate=&FromTime=&ToTime=&LastAction=False&Actions=H001;S001;&AAO=O&Subjects=I0747;I0748;&SAO=O&TT=&ID=cMVddWbvD'
@@ -184,12 +212,12 @@ if __name__ == '__main__':
     else:
         uri = capriglione_finance
 
-    id, search_results = search(uri)
+    search = Search(uri)
 
     # This is just a very simple demonstration that we can actually get 
     # search results directly from BillSearchResults.aspx.
-    print('{} bills found...'.format(search_results.count))
-    for index, bill in enumerate(search_results.bills):
+    print('{} bills found...'.format(search.result_count))
+    for index, bill in enumerate(search.results):
         if index > 40:
             # Be nice to capitol.texas.gov.  Don't make a bunch of requests
             # unless we're really going to use the responses.
@@ -197,7 +225,7 @@ if __name__ == '__main__':
 
         print('result {} of {}: {}'.format(
             index+1, 
-            search_results.count, 
+            search.result_count, 
             bill))
 
 

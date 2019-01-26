@@ -36,6 +36,9 @@ class SearchResults(object):
 
     @property
     def count(self):
+        return self.__len__()
+
+    def __len__(self):
         return self.page_seq.total_result_count
 
     @property
