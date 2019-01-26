@@ -4,34 +4,26 @@ Bill Search](https://capitol.texas.gov/Search/BillSearch.aspx).
 ## Install and Test
 
 ```bash
-$ pip install --user pipenv
+$ pip install txbillsearch
 ...
-$ cd TxBillSearch
-...
-$ pipenv install
-... installs Requests and BeatifulSoup 4 ...
-$ pipenv shell
-(TxLegOnlineScraper3-_s_xUwQa) $ python txbillsearch.py
+$ python -m txbillsearch.txbillsearch
 1604 bills found...
 result 1 of 1604: HB 1 by Zerwas H Filed 2019-01-23
 result 2 of 1604: HB 20 by Capriglione H Filed 2019-01-24
 ...
 result 41 of 1604: HB 59 by Swanson H Filed 2018-11-12
-(TxLegOnlineScraper3-_s_xUwQa) $ exit # from the pipenv environment
 $
 ```
 
 ## Module Usage
 
-The `if __name__ == '__main__':` block at the end of
-[txbillsearch.py](txbillsearch.py) gives a notion of how to use this module.
-The most useful exposed function is `search()`.
-
 ```python
-# NOTICE: We chopped off the 'ID=abc123DEF' query param!
+import txbillsearch
+
+# NOTICE: We chopped off the 'ID=cMVddWbvD' query param!
 SESSION_86_BILLS = 'https://capitol.texas.gov/Search/BillSearchResults.aspx?NSP=1&SPL=False&SPC=False&SPA=True&SPS=False&Leg=86&Sess=R&ChamberH=True&ChamberS=True&BillType=B;JR;CR;R;;;&AuthorCode=&SponsorCode=&ASAndOr=O&IsPA=True&IsJA=False&IsCA=False&IsPS=True&IsJS=False&IsCS=False&CmteCode=&CmteStatus=&OnDate=&FromDate=&ToDate=&FromTime=&ToTime=&LastAction=False&Actions=S000;S001;H001;&AAO=O&Subjects=&SAO=&TT=' # NO ID!
 
-id, search_results = search(SESSION_86_BILLS)
+id, search_results = txbillsearch.search(SESSION_86_BILLS)
 
 # This is just a very simple demonstration that we can actually get 
 # search results directly from BillSearchResults.aspx.
