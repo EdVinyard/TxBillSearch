@@ -6,7 +6,7 @@ import threading
 from .page import Page, PageSequence, SearchResults
 
 # TODO: Use logging module instead.
-DEBUG = True
+DEBUG = False
 
 if DEBUG:
     from pprint import pprint
