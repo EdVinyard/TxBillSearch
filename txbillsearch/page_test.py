@@ -1,20 +1,22 @@
-from page import _parse, _nearest_ancestor_table, Page, Result, PageSequence
+from .page import _parse, _nearest_ancestor_table, Page, Result, PageSequence
 import unittest
 import datetime
+import os.path
 
 
 BILL_SEARCH_RESULTS_ABS_URI = 'https://capitol.texas.gov/Search/BillSearchResults.aspx'
 
-FULL_RESULT_PAGE_FILENAME = 'Test/BillSearchResults.aspx.FullPage.html'
-with open(FULL_RESULT_PAGE_FILENAME, 'r') as f:
+TEST_DATA_DIR = os.path.join(os.path.dirname(__file__), 'Test')
+FULL_RESULT_PAGE_PATH = os.path.join(TEST_DATA_DIR, 'BillSearchResults.aspx.FullPage.html')
+with open(FULL_RESULT_PAGE_PATH, 'r') as f:
     FULL_RESULT_PAGE_HTML = f.read()
 
-RESULT_LAST_PAGE_FILENAME = 'Test/BillSearchResults.aspx.LastPage.html'
-with open(RESULT_LAST_PAGE_FILENAME, 'r') as f:
+RESULT_LAST_PAGE_PATH = os.path.join(TEST_DATA_DIR, 'BillSearchResults.aspx.LastPage.html')
+with open(RESULT_LAST_PAGE_PATH, 'r') as f:
     RESULT_LAST_PAGE_HTML = f.read()
 
-NO_RESULTS_PAGE_FILENAME = 'Test/BillSearchResults.aspx.NoMatches.html'
-with open(NO_RESULTS_PAGE_FILENAME, 'r') as f:
+NO_RESULTS_PAGE_PATH = os.path.join(TEST_DATA_DIR, 'BillSearchResults.aspx.NoMatches.html')
+with open(NO_RESULTS_PAGE_PATH, 'r') as f:
     NO_RESULTS_PAGE_HTML = f.read()
 
 
