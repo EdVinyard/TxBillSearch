@@ -15,6 +15,18 @@ _BILL_SEARCH_URI = "https://capitol.texas.gov/Search/BillSearch.aspx"
 
 
 def _semicolon_delimited_option_values(select_element):
+    '''
+    Given a BeautifulSoup <select> element, return a string that contains 
+    all the semicolon-delimited values of nested <option> elements.
+
+    Example:  Returns "red;green;blue" given
+
+        <select>
+            <option value="red"></option
+            <option value="green"></option
+            <option value="blue"></option
+        </select>
+    '''
     if select_element is None:
         return ''
 
@@ -26,6 +38,12 @@ def _semicolon_delimited_option_values(select_element):
 
 
 def _postback_data(cold_response_text):
+    '''
+    Given the raw HTML body of a ASP.NET WebForms page, returns the form
+    fields for a POSTBACK.  This is NOT a generic method, as it replicates
+    some Javascript fiddling with <select> elements that offer a kind of
+    "multi-select" capability using a second hidden (via CSS) form field.
+    '''
     ## Prepare the POSTBACK to BillSearch.aspx.
     soup = BeautifulSoup(cold_response_text, 'html.parser')
     post_data = {}
@@ -77,10 +95,19 @@ def _postback_data(cold_response_text):
 
 
 def _new_search(session, query_without_id):
+    '''
+    Returns a BillSearchResults.aspx URI that contains the supplied search
+    criteria and a shiny, new ID.
+    '''
+    # The search criteria will be shuffled into form fields in the initial
+    # response.
     search_uri = '{}?{}'.format(_BILL_SEARCH_URI, query_without_id)
     if DEBUG: print(search_uri)
     
     cold_response = session.get(search_uri)
+
+    # The search criteria will be shuffled *back* into query parameters,
+    # accompanied an associated ID in the POSTBACK response.
     postback_response = session.post(
         search_uri,
         data=_postback_data(cold_response.text), 
@@ -110,9 +137,10 @@ def _http_get_factory(requests_session):
 def _query_without_id(uri):
     '''
     The Search page requires that every query parameter be included; if any are
-    omitted -- even the ones with no value -- you start with fresh search criteria
-    or get an error.  So we can't use the urllib.parse.parse_qs method to 
-    disassemble the query, and have to settle for string manipulation.
+    omitted -- even the ones with no value -- you start with fresh search
+    criteria or get an error. For that reason, we can't use the
+    urllib.parse.parse_qs method to disassemble the query, but have to settle
+    for string manipulation.
     '''
     uri_parts = urlparse(uri)
     return '&'.join( param 
@@ -126,13 +154,9 @@ def search(search_results_uri, requests_session=None):
     Repeats a Texas Legislature Bill Search and returns a tuple of 
     (search_id, search_results).
 
-        search_results_uri_without_id - the absolute URI of your BillSearchResults.aspx 
-            page WITHOUT THE "ID=abc123DEF" QUERY PARAMETER!  E.g., 
+        search_results_uri - the absolute URI of your BillSearchResults.aspx 
+            page, including all query parameters.  For example, 
             "https://capitol.texas.gov/Search/BillSearchResults.aspx?NSP=1&SPL=False&...&TT="
-
-        search_id (OPTIONAL) - the ID of a previous search you conducted recently 
-            (past day-ish?) if available.  If you omit this parameter, a new one 
-            will be fetched automatically.
 
         requests_session (OPTIONAL) - a Requests library Session object, if you
             are using one.  If you omit this parameter, a new Session will be
@@ -167,6 +191,8 @@ if __name__ == '__main__':
     print('{} bills found...'.format(search_results.count))
     for index, bill in enumerate(search_results.bills):
         if index > 40:
+            # Be nice to capitol.texas.gov.  Don't make a bunch of requests
+            # unless we're really going to use the responses.
             break
 
         print('result {} of {}: {}'.format(
