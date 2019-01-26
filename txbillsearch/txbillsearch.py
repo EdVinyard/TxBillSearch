@@ -78,7 +78,7 @@ def _postback_data(cold_response_text):
 
 def _new_search(session, query_without_id):
     search_uri = '{}?{}'.format(_BILL_SEARCH_URI, query_without_id)
-    print(search_uri)
+    if DEBUG: print(search_uri)
     
     cold_response = session.get(search_uri)
     postback_response = session.post(
@@ -86,7 +86,7 @@ def _new_search(session, query_without_id):
         data=_postback_data(cold_response.text), 
         allow_redirects=False) # <== This parameter is critical!
     relative_results_uri = postback_response.headers.get('Location', None)
-    print(relative_results_uri)
+    if DEBUG: print(relative_results_uri)
     absolute_results_uri = urljoin(_BILL_SEARCH_URI, relative_results_uri)
     return absolute_results_uri
 
@@ -141,7 +141,7 @@ def search(search_results_uri, requests_session=None):
     session = requests_session if requests_session else requests.Session()
     http_get = _http_get_factory(session)
     query_without_id = _query_without_id(search_results_uri)
-    print(query_without_id)
+    if DEBUG: print(query_without_id)
     results_uri = _new_search(session, query_without_id)
     
     first_page = Page(http_get(results_uri), results_uri)
@@ -151,9 +151,16 @@ def search(search_results_uri, requests_session=None):
 
 
 if __name__ == '__main__':
+    import sys
     capriglione_finance = 'https://capitol.texas.gov/Search/BillSearch.aspx?NSP=3&SPL=True&SPC=False&SPA=True&SPS=True&Leg=86&Sess=R&ChamberH=True&ChamberS=True&BillType=B;JR;CR;R;;;&AuthorCode=A2345&SponsorCode=&ASAndOr=O&IsPA=True&IsJA=False&IsCA=False&IsPS=True&IsJS=False&IsCS=False&CmteCode=&CmteStatus=&OnDate=&FromDate=&ToDate=&FromTime=&ToTime=&LastAction=False&Actions=H001;S001;&AAO=O&Subjects=I0747;I0748;&SAO=O&TT=&ID=cMVddWbvD'
     author_canales = 'https://capitol.texas.gov/Search/BillSearchResults.aspx?NSP=1&SPL=True&SPC=False&SPA=False&SPS=False&Leg=86&Sess=R&ChamberH=True&ChamberS=True&BillType=B;JR;;;;;&AuthorCode=A2340&SponsorCode=&ASAndOr=O&IsPA=True&IsJA=False&IsCA=False&IsPS=True&IsJS=False&IsCS=False&CmteCode=&CmteStatus=&OnDate=&FromDate=&ToDate=&FromTime=&ToTime=&LastAction=False&Actions=&AAO=&Subjects=&SAO=&TT=&ID=rRVjTy3oj'
-    id, search_results = search(capriglione_finance)
+
+    if len(sys.argv) > 1:
+        uri = sys.argv[1]
+    else:
+        uri = capriglione_finance
+
+    id, search_results = search(uri)
 
     # This is just a very simple demonstration that we can actually get 
     # search results directly from BillSearchResults.aspx.
