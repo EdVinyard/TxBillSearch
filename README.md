@@ -1,4 +1,7 @@
-A thin, incomplete Python library wrapper around the [Texas Legislature Online
+[![PyPI version](https://badge.fury.io/py/txbillsearch.svg)](https://pypi.org/project/txbillsearch/)
+![Python 3](https://img.shields.io/pypi/pyversions/txbillsearch.svg)
+
+A thin, incomplete Python 3 library wrapper around the [Texas Legislature Online
 Bill Search](https://capitol.texas.gov/Search/BillSearch.aspx).
 
 ## Install and Test
@@ -15,7 +18,7 @@ result 41 of 1604: HB 59 by Swanson H Filed 2018-11-12
 $
 ```
 
-## Module Usage
+## Usage
 
 ```python
 import txbillsearch
