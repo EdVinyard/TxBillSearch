@@ -20,14 +20,10 @@ search = Search(uri)
 print('{} bills found...'.format(search.result_count))
 for index, bill in enumerate(search.results):
     if index > 48:
-        # Be nice to capitol.texas.gov.  Don't make a bunch of requests
-        # unless we're really going to use the responses.
+        # Be nice.  Don't make gratuitous requests.
         break
 
-    print('result {} of {}: {}'.format(
-        index+1, 
-        search.result_count, 
-        bill))
+    print(f'result {index+1} of {search.result_count}: {bill}')
 
 print('The next page of results is {}'.format(
     search.page_seq.last_loaded_page.next_page_query))
