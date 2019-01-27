@@ -160,6 +160,24 @@ class TestPage(unittest.TestCase):
         # Assert
         self.assertIsNone(actual)
 
+    def test_next_page_query(self):
+        # Arrange
+        expected = 'CP=2&shCmte=False&shComp=False&shSumm=False&NSP=1&SPL=False&SPC=False&SPA=True&SPS=False&Leg=86&Sess=R&ChamberH=True&ChamberS=True&BillType=B;JR;;;;;&AuthorCode=&SponsorCode=&ASAndOr=O&IsPA=True&IsJA=False&IsCA=False&IsPS=True&IsJS=False&IsCS=False&CmteCode=&CmteStatus=&OnDate=&FromDate=&ToDate=&FromTime=&ToTime=&LastAction=False&Actions=S000;S001;H001;&AAO=O&Subjects=&SAO=&TT=&ID=jNkeLN5Sp'
+
+        # Act
+        actual = Page(FULL_RESULT_PAGE_HTML, BILL_SEARCH_RESULTS_ABS_URI)
+
+        # Assert
+        self.assertEqual(actual.next_page_query, expected)
+
+    def test_next_page_query_last_page(self):
+        # Act 
+        last_page = Page(RESULT_LAST_PAGE_HTML, BILL_SEARCH_RESULTS_ABS_URI)
+        actual = last_page.next_page_query
+
+        # Assert
+        self.assertIsNone(actual)
+
     def test_results(self):
         # Act
         actual = Page(FULL_RESULT_PAGE_HTML, BILL_SEARCH_RESULTS_ABS_URI)

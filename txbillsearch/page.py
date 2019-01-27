@@ -169,11 +169,20 @@ class Page(object):
         relative_uri = a.attrs['href'] # e.g., "BillSearchResults.aspx?CP=3&..."
         return urllib.parse.urljoin(absolute_uri, relative_uri)
 
+    @staticmethod
+    def _parse_next_page_query(next_page_uri):
+        if next_page_uri is None:
+            return None
+
+        uri_parts = urllib.parse.urlparse(next_page_uri)
+        return uri_parts.query
+
     def __init__(self, page_text, absolute_uri):
         soup = _parse(page_text)
 
         self.absolute_uri = absolute_uri
         self.next_page_uri = Page._parse_next_page_uri(soup, absolute_uri)
+        self.next_page_query = Page._parse_next_page_query(self.next_page_uri)
         self.total_result_count = Page._parse_total_result_count(soup)
         self.results = Page._parse_results(soup, absolute_uri)
 

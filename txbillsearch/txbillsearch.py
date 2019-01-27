@@ -1,9 +1,8 @@
 import requests
-from bs4 import BeautifulSoup
 from urllib.parse import urlparse, urljoin
 import threading
 
-from .page import Page, PageSequence, SearchResults
+from .page import Page, PageSequence, SearchResults, _parse
 
 # TODO: Use logging module instead.
 DEBUG = False
@@ -45,7 +44,7 @@ def _postback_data(cold_response_text):
     "multi-select" capability using a second hidden (via CSS) form field.
     '''
     ## Prepare the POSTBACK to BillSearch.aspx.
-    soup = BeautifulSoup(cold_response_text, 'html.parser')
+    soup = _parse(cold_response_text)
     post_data = {}
 
     form = soup.find(name='form', attrs={'name':'Form1'})
@@ -153,16 +152,9 @@ def search(search_results_uri, requests_session=None):
     '''
     DEPRECATED: prefer txbillsearch.Search class
     '''
-    session = requests_session if requests_session else requests.Session()
-    http_get = _http_get_factory(session)
-    query_without_id = _query_without_id(search_results_uri)
-    if DEBUG: print(query_without_id)
-    results_uri = _new_search(session, query_without_id)
-    
-    first_page = Page(http_get(results_uri), results_uri)
-    page_seq = PageSequence(http_get, first_page)
-    search_results = SearchResults(page_seq)
-    return id, search_results
+    ## TODO: Remove this method completely.
+    s = Search(search_results_uri, requests_session)
+    return id, s.results
 
 
 class Search(object):
@@ -182,7 +174,15 @@ class Search(object):
         '''
         self.search_results_uri = search_results_uri
         self.session = requests_session if requests_session else requests.Session()
-        self.id, self.search_results = search(search_results_uri, self.session)
+
+        http_get = _http_get_factory(self.session)
+        query_without_id = _query_without_id(search_results_uri)
+        if DEBUG: print(query_without_id)
+        self.results_uri = _new_search(self.session, query_without_id)
+        
+        self.first_page = Page(http_get(self.results_uri), self.results_uri)
+        self.page_seq = PageSequence(http_get, self.first_page)
+        self.search_results = SearchResults(self.page_seq)
 
     @property
     def results(self):
@@ -228,5 +228,3 @@ if __name__ == '__main__':
             search.result_count, 
             bill))
 
-
-## TODO: encapsulate most of this module into a stateful class
