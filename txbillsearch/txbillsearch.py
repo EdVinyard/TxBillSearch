@@ -155,7 +155,8 @@ def search(search_results_uri, requests_session=None):
     '''
     ## TODO: Remove this method completely.
     s = Search(search_results_uri, requests_session)
-    return id, s.results
+    ## KLUDGE: return a bogus ID to avoid breaking earlier releases
+    return 'FAKEID123', s.results
 
 
 class Search(object):
