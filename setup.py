@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="txbillsearch",
-    version="0.1.6",
+    version="0.1.7",
     author="Ed Vinyard",
     author_email="ed.vinyard@gmail.com",
     description="Scrape Texas Legislature Online Bill Search results.",
