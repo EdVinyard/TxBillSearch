@@ -1,1 +1,1 @@
-from .txbillsearch import search
+from .txbillsearch import search, Search

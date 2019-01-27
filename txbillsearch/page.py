@@ -1,11 +1,13 @@
-from bs4 import BeautifulSoup
+import logging
 import re
 import datetime
 import threading
 import urllib.parse
 
+from bs4 import BeautifulSoup
 
-DEBUG = False
+
+log = logging.getLogger(__name__)
 
 
 def _parse(html):
@@ -86,6 +88,10 @@ class PageSequence(object):
     def total_result_count(self):
         return self._pages[0].total_result_count
 
+    @property
+    def last_loaded_page(self):
+        return self._pages[-1]
+
     def _all_pages_loaded(self):
         return self._pages[-1].next_page_uri is None
 
@@ -95,12 +101,7 @@ class PageSequence(object):
 
         with self._pages_lock:
             while page_index >= len(self._pages) and not self._all_pages_loaded():
-                last_loaded_page = self._pages[-1]
-                uri = last_loaded_page.next_page_uri
-                
-                if DEBUG:
-                    print('fetching {}...'.format(uri))
-
+                uri = self.last_loaded_page.next_page_uri
                 response_body = self._http_get(uri)
                 self._pages.append(Page(response_body, uri))
 

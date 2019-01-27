@@ -1,14 +1,12 @@
-import requests
-from urllib.parse import urlparse, urljoin
+import logging
 import threading
+from urllib.parse import urlparse, urljoin
+from pprint import pformat
+
+import requests
 
 from .page import Page, PageSequence, SearchResults, _parse
-
-# TODO: Use logging module instead.
-DEBUG = False
-
-if DEBUG:
-    from pprint import pprint
+log = logging.getLogger(__name__)
 
 _BILL_SEARCH_URI = "https://capitol.texas.gov/Search/BillSearch.aspx"
 
@@ -53,15 +51,19 @@ def _postback_data(cold_response_text):
         try:
             name = inpt.attrs['name']
         except KeyError:
-            if DEBUG: print('DEBUG: skipping unnamed form field: ' + str(inpt))
+            log.debug('skipping unnamed %s', inpt)
             continue
 
         if 'value' in inpt.attrs:
             value = inpt.attrs['value']
-        elif inpt.attrs.get('checked', None) == 'checked':
-            value = 'on'
+        elif inpt.attrs.get('type', None) == 'checkbox':
+            if inpt.attrs.get('checked', None) == 'checked':
+                value = 'on'
+            else:
+                # unchecked checkbox
+                continue
         else:
-            if DEBUG: print("DEBUG: skipping form field missing both 'value' and 'checked' attributes: " + str(inpt))
+            log.debug("skipping value-less %s", inpt)
             continue
 
         post_data[name] = value
@@ -88,8 +90,7 @@ def _postback_data(cold_response_text):
     actions_select = form.find(name='select', attrs={'name':'usrActionsFolder$lstActions'})
     post_data['usrActionsFolder$txtCodes'] = _semicolon_delimited_option_values(actions_select)
     
-    if DEBUG: pprint(post_data)
-    
+    log.debug("POSTBACK data: %s", pformat(post_data))
     return post_data
 
 
@@ -101,18 +102,18 @@ def _new_search(session, query_without_id):
     # The search criteria will be shuffled into form fields in the initial
     # response.
     search_uri = '{}?{}'.format(_BILL_SEARCH_URI, query_without_id)
-    if DEBUG: print(search_uri)
     
     cold_response = session.get(search_uri)
 
     # The search criteria will be shuffled *back* into query parameters,
     # accompanied an associated ID in the POSTBACK response.
+    log.debug("POST %s", _BILL_SEARCH_URI)
     postback_response = session.post(
         search_uri,
         data=_postback_data(cold_response.text), 
         allow_redirects=False) # <== This parameter is critical!
     relative_results_uri = postback_response.headers.get('Location', None)
-    if DEBUG: print(relative_results_uri)
+    log.debug("Redirected to %s", relative_results_uri)
     absolute_results_uri = urljoin(_BILL_SEARCH_URI, relative_results_uri)
     return absolute_results_uri
 
@@ -177,7 +178,7 @@ class Search(object):
 
         http_get = _http_get_factory(self.session)
         query_without_id = _query_without_id(search_results_uri)
-        if DEBUG: print(query_without_id)
+        log.debug("Query without ID: %s", query_without_id)
         self.results_uri = _new_search(self.session, query_without_id)
         
         self.first_page = Page(http_get(self.results_uri), self.results_uri)
@@ -200,31 +201,3 @@ class Search(object):
         the constructor.
         '''
         return self.search_results.count
-
-
-if __name__ == '__main__':
-    import sys
-    capriglione_finance = 'https://capitol.texas.gov/Search/BillSearch.aspx?NSP=3&SPL=True&SPC=False&SPA=True&SPS=True&Leg=86&Sess=R&ChamberH=True&ChamberS=True&BillType=B;JR;CR;R;;;&AuthorCode=A2345&SponsorCode=&ASAndOr=O&IsPA=True&IsJA=False&IsCA=False&IsPS=True&IsJS=False&IsCS=False&CmteCode=&CmteStatus=&OnDate=&FromDate=&ToDate=&FromTime=&ToTime=&LastAction=False&Actions=H001;S001;&AAO=O&Subjects=I0747;I0748;&SAO=O&TT=&ID=cMVddWbvD'
-    author_canales = 'https://capitol.texas.gov/Search/BillSearchResults.aspx?NSP=1&SPL=True&SPC=False&SPA=False&SPS=False&Leg=86&Sess=R&ChamberH=True&ChamberS=True&BillType=B;JR;;;;;&AuthorCode=A2340&SponsorCode=&ASAndOr=O&IsPA=True&IsJA=False&IsCA=False&IsPS=True&IsJS=False&IsCS=False&CmteCode=&CmteStatus=&OnDate=&FromDate=&ToDate=&FromTime=&ToTime=&LastAction=False&Actions=&AAO=&Subjects=&SAO=&TT=&ID=rRVjTy3oj'
-
-    if len(sys.argv) > 1:
-        uri = sys.argv[1]
-    else:
-        uri = capriglione_finance
-
-    search = Search(uri)
-
-    # This is just a very simple demonstration that we can actually get 
-    # search results directly from BillSearchResults.aspx.
-    print('{} bills found...'.format(search.result_count))
-    for index, bill in enumerate(search.results):
-        if index > 40:
-            # Be nice to capitol.texas.gov.  Don't make a bunch of requests
-            # unless we're really going to use the responses.
-            break
-
-        print('result {} of {}: {}'.format(
-            index+1, 
-            search.result_count, 
-            bill))
-
