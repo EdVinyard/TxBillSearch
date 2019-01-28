@@ -177,13 +177,13 @@ class Search(object):
         self.search_results_uri = search_results_uri
         self.session = requests_session if requests_session else requests.Session()
 
-        http_get = _http_get_factory(self.session)
+        self.http_get = _http_get_factory(self.session)
         query_without_id = _query_without_id(search_results_uri)
         log.debug("Query without ID: %s", query_without_id)
         self.results_uri = _new_search(self.session, query_without_id)
         
-        self.first_page = Page(http_get(self.results_uri), self.results_uri)
-        self.page_seq = PageSequence(http_get, self.first_page)
+        self.first_page = Page(self.http_get(self.results_uri), self.results_uri)
+        self.page_seq = PageSequence(self.http_get, self.first_page)
         self.search_results = SearchResults(self.page_seq)
 
     @property
