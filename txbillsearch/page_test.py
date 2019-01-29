@@ -19,6 +19,10 @@ NO_RESULTS_PAGE_PATH = os.path.join(TEST_DATA_DIR, 'BillSearchResults.aspx.NoMat
 with open(NO_RESULTS_PAGE_PATH, 'r') as f:
     NO_RESULTS_PAGE_HTML = f.read()
 
+RESULTS_PAGE1OF2_PATH = os.path.join(TEST_DATA_DIR, "BillSearch.aspx.Page1of2.html")
+with open(RESULTS_PAGE1OF2_PATH, 'r') as f:
+    RESULTS_PAGE1OF2_HTML = f.read()
+
 
 class TestNearestAncestorTable(unittest.TestCase):
     markup = '''
@@ -148,6 +152,36 @@ class TestPage(unittest.TestCase):
 
         # Act
         actual = Page(FULL_RESULT_PAGE_HTML, BILL_SEARCH_RESULTS_ABS_URI)
+
+        # Assert
+        self.assertEqual(actual.next_page_uri, expected)
+
+    def test_next_page_uri_page1of2(self):
+        # When there are exactly pages of search results,
+        # neither the first/last page links nor the 
+        # next/previous page links are displayed.  Instead just
+        # the links labeled "1" and "2" appear, as in the
+        # following fragment from Test/BillSearch.aspx.Page1of2.html.
+        #
+        # <td class="noPrint" width="100%" valign="top" nowrap="" align="right">
+        #     <strong>
+        #         <a style="text-decoration: none; border: 2px solid #a52b02;" 
+        #             href="BillSearchResults.aspx?CP=1&..."
+        #             >1</a>
+        #         </strong>
+        #     <a style="text-decoration: none;" 
+        #         href="BillSearchResults.aspx?CP=2&..."
+        #         >2</a>
+        #     &nbsp;
+        # </td>
+        #
+        # Why does it work that way?  Who knows?
+
+        # Arrange
+        expected = 'https://capitol.texas.gov/Search/BillSearchResults.aspx?CP=2&shCmte=False&shComp=False&shSumm=False&NSP=1&SPL=False&SPC=False&SPA=False&SPS=True&Leg=86&Sess=R&ChamberH=True&ChamberS=True&BillType=B;JR;;;;;&AuthorCode=&SponsorCode=&ASAndOr=O&IsPA=True&IsJA=False&IsCA=False&IsPS=True&IsJS=False&IsCS=False&CmteCode=&CmteStatus=&OnDate=&FromDate=&ToDate=&FromTime=&ToTime=&LastAction=False&Actions=&AAO=&Subjects=I0320;I0013;I0760;I0755;I0002;S0443;S0367;S0496;I0875;I0885;I0870;&SAO=O&TT=&ID=cMVddWbvD'
+
+        # Act
+        actual = Page(RESULTS_PAGE1OF2_HTML, BILL_SEARCH_RESULTS_ABS_URI)
 
         # Assert
         self.assertEqual(actual.next_page_uri, expected)

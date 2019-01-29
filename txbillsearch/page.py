@@ -151,9 +151,15 @@ class Page(object):
             ]
 
     @staticmethod
+    def _page2_link_predicate(element):
+        return element.name == 'a' and \
+            element.attrs.get('href', '').startswith('BillSearchResults.aspx?CP=2&') and \
+            element.string == '2'
+
+    @staticmethod
     def _parse_next_page_uri(soup, absolute_uri):
         '''
-        Each "Next Page" link looks like
+        Normally, the "Next Page" link looks like:
 
             <a href="BillSearchResults.aspx?CP=2&...">
                 <img valign="bottom" 
@@ -162,13 +168,32 @@ class Page(object):
             </a>
         '''
         img = soup.find(name='img', attrs={'alt':'Navigate to next page'})
-        
-        if img is None:
-            return None
+        if img:
+            a = img.parent
+        else:
+            # KLUDGE: When there are exactly *two* pages of search results,
+            # neither the first/last page links nor the next/previous page links
+            # appear. Only links labeled "1" and "2" appear, as in the following
+            # HTML fragment.
+            #
+            # <td class="noPrint" width="100%" valign="top" nowrap="" align="right">
+            #     <strong>
+            #         <a style="text-decoration: none; border: 2px solid #a52b02;" 
+            #             href="BillSearchResults.aspx?CP=1&..."
+            #             >1</a>
+            #         </strong>
+            #     <a style="text-decoration: none;" 
+            #         href="BillSearchResults.aspx?CP=2&..."
+            #         >2</a>
+            #     &nbsp;
+            # </td>
+            a = soup.find(Page._page2_link_predicate)
 
-        a = img.parent
-        relative_uri = a.attrs['href'] # e.g., "BillSearchResults.aspx?CP=3&..."
-        return urllib.parse.urljoin(absolute_uri, relative_uri)
+        if a:
+            relative_uri = a.attrs['href'] # e.g., "BillSearchResults.aspx?CP=3&..."
+            return urllib.parse.urljoin(absolute_uri, relative_uri)
+        else:
+            return None
 
     @staticmethod
     def _parse_next_page_query(next_page_uri):
