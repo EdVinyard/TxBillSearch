@@ -157,6 +157,45 @@ class Page(object):
             element.string == '2'
 
     @staticmethod
+    def _page_1of2_next_page_a(soup):
+        '''
+        KLUDGE: When there are exactly *two* pages of search results,
+        neither the first/last page links nor the next/previous page links
+        appear. Only links labeled "1" and "2" appear, as in the following
+        HTML fragment.
+        
+        <td class="noPrint" width="100%" valign="top" nowrap="" align="right">
+            <strong>
+                <a style="text-decoration: none; border: 2px solid #a52b02;" 
+                    href="BillSearchResults.aspx?CP=1&..."
+                    >1</a>
+                </strong>
+            <a style="text-decoration: none;" 
+                href="BillSearchResults.aspx?CP=2&..."
+                >2</a>
+            &nbsp;
+        </td>
+        '''
+        if soup.find(name='img', attrs={'alt':'Navigate to previous page'}):
+            # The "next page" button is never present on the last page of 
+            # many, but the "previous page" is.  This method isn't
+            # applicable when the site is in the mood to display 
+            # next/prev links!
+            return None
+
+        page2_a = soup.find(Page._page2_link_predicate)
+
+        if not page2_a:
+            return None
+
+        is_current_page = page2_a.parent.name == 'strong'
+
+        if is_current_page:
+            return None
+        else:
+            return page2_a
+
+    @staticmethod
     def _parse_next_page_uri(soup, absolute_uri):
         '''
         Normally, the "Next Page" link looks like:
@@ -169,28 +208,12 @@ class Page(object):
         '''
         img = soup.find(name='img', attrs={'alt':'Navigate to next page'})
         if img:
-            a = img.parent
+            next_page_a = img.parent
         else:
-            # KLUDGE: When there are exactly *two* pages of search results,
-            # neither the first/last page links nor the next/previous page links
-            # appear. Only links labeled "1" and "2" appear, as in the following
-            # HTML fragment.
-            #
-            # <td class="noPrint" width="100%" valign="top" nowrap="" align="right">
-            #     <strong>
-            #         <a style="text-decoration: none; border: 2px solid #a52b02;" 
-            #             href="BillSearchResults.aspx?CP=1&..."
-            #             >1</a>
-            #         </strong>
-            #     <a style="text-decoration: none;" 
-            #         href="BillSearchResults.aspx?CP=2&..."
-            #         >2</a>
-            #     &nbsp;
-            # </td>
-            a = soup.find(Page._page2_link_predicate)
+            next_page_a = Page._page_1of2_next_page_a(soup)
 
-        if a:
-            relative_uri = a.attrs['href'] # e.g., "BillSearchResults.aspx?CP=3&..."
+        if next_page_a:
+            relative_uri = next_page_a.attrs['href'] # e.g., "BillSearchResults.aspx?CP=3&..."
             return urllib.parse.urljoin(absolute_uri, relative_uri)
         else:
             return None

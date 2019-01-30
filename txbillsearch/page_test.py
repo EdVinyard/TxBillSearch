@@ -3,6 +3,8 @@ import unittest
 import datetime
 import os.path
 
+from bs4 import BeautifulSoup
+
 
 BILL_SEARCH_RESULTS_ABS_URI = 'https://capitol.texas.gov/Search/BillSearchResults.aspx'
 
@@ -18,10 +20,6 @@ with open(RESULT_LAST_PAGE_PATH, 'r') as f:
 NO_RESULTS_PAGE_PATH = os.path.join(TEST_DATA_DIR, 'BillSearchResults.aspx.NoMatches.html')
 with open(NO_RESULTS_PAGE_PATH, 'r') as f:
     NO_RESULTS_PAGE_HTML = f.read()
-
-RESULTS_PAGE1OF2_PATH = os.path.join(TEST_DATA_DIR, "BillSearch.aspx.Page1of2.html")
-with open(RESULTS_PAGE1OF2_PATH, 'r') as f:
-    RESULTS_PAGE1OF2_HTML = f.read()
 
 
 class TestNearestAncestorTable(unittest.TestCase):
@@ -162,29 +160,72 @@ class TestPage(unittest.TestCase):
         # next/previous page links are displayed.  Instead just
         # the links labeled "1" and "2" appear, as in the
         # following fragment from Test/BillSearch.aspx.Page1of2.html.
-        #
-        # <td class="noPrint" width="100%" valign="top" nowrap="" align="right">
-        #     <strong>
-        #         <a style="text-decoration: none; border: 2px solid #a52b02;" 
-        #             href="BillSearchResults.aspx?CP=1&..."
-        #             >1</a>
-        #         </strong>
-        #     <a style="text-decoration: none;" 
-        #         href="BillSearchResults.aspx?CP=2&..."
-        #         >2</a>
-        #     &nbsp;
-        # </td>
-        #
-        # Why does it work that way?  Who knows?
 
         # Arrange
-        expected = 'https://capitol.texas.gov/Search/BillSearchResults.aspx?CP=2&shCmte=False&shComp=False&shSumm=False&NSP=1&SPL=False&SPC=False&SPA=False&SPS=True&Leg=86&Sess=R&ChamberH=True&ChamberS=True&BillType=B;JR;;;;;&AuthorCode=&SponsorCode=&ASAndOr=O&IsPA=True&IsJA=False&IsCA=False&IsPS=True&IsJS=False&IsCS=False&CmteCode=&CmteStatus=&OnDate=&FromDate=&ToDate=&FromTime=&ToTime=&LastAction=False&Actions=&AAO=&Subjects=I0320;I0013;I0760;I0755;I0002;S0443;S0367;S0496;I0875;I0885;I0870;&SAO=O&TT=&ID=cMVddWbvD'
+        soup = _parse('''
+            <td valign="top" align="right" class="noPrint" nowrap width="100%">
+                <strong>
+                    <a href="BillSearchResults.aspx?CP=1&...">1</a>
+                </strong>
+                <a href="BillSearchResults.aspx?CP=2&...">2</a>
+                &nbsp;
+            </td>        
+            ''')
 
         # Act
-        actual = Page(RESULTS_PAGE1OF2_HTML, BILL_SEARCH_RESULTS_ABS_URI)
+        actual = Page._parse_next_page_uri(soup, 'http://localhost/')
 
         # Assert
-        self.assertEqual(actual.next_page_uri, expected)
+        self.assertEqual(actual, 'http://localhost/BillSearchResults.aspx?CP=2&...')
+
+    def test_next_page_uri_page2of2(self):
+        # Arrange
+        soup = _parse('''
+            <td align="right" height="20">
+                <a href="BillSearchResults.aspx?CP=1&...">1</a>
+                <strong>
+                    <a href="BillSearchResults.aspx?CP=2&...">2</a>
+                </strong>
+                &nbsp;
+                &nbsp;
+            </td>
+            ''')
+
+        # Act
+        actual = Page._parse_next_page_uri(soup, "http://example.com/")
+
+        # Assert
+        self.assertIsNone(actual)
+
+    def test_next_page_uri_page10of10(self):
+        # Arrange
+        soup = _parse('''
+            <td class="noPrint" width="100%" valign="top" nowrap="" align="right">
+                <a href="BillSearchResults.aspx?CP=1&...">
+                    <img valign="bottom" src="../Images/icon_first_active.gif" alt="Navigate to first page">
+                </a>
+                <a href="BillSearchResults.aspx?CP=69&...">
+                    <img valign="bottom" src="../Images/icon_prev_active.gif" alt="Navigate to previous page">
+                </a>
+                <a href="BillSearchResults.aspx?CP=1&...">1</a>
+                <a href="BillSearchResults.aspx?CP=2&...">2</a>
+                <a href="BillSearchResults.aspx?CP=3&...">3</a>
+                <a href="BillSearchResults.aspx?CP=4&...">4</a>
+                <a href="BillSearchResults.aspx?CP=5&...">5</a>
+                <a href="BillSearchResults.aspx?CP=6&...">6</a>
+                <a href="BillSearchResults.aspx?CP=7&...">7</a>
+                <a href="BillSearchResults.aspx?CP=8&...">8</a>
+                <a href="BillSearchResults.aspx?CP=9&...">9</a>
+                <strong><a href="BillSearchResults.aspx?CP=10&...">10</a></strong>
+                &nbsp;
+            </td>
+            ''')
+        
+        # Act
+        actual = Page._parse_next_page_uri(soup, "http://example.com/")
+
+        # Assert
+        self.assertIsNone(actual)
 
     def test_next_page_uri_last_page(self):
         # Act 
